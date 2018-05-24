@@ -1,7 +1,7 @@
 import {Event} from "./EventDispatcherMixin";
 
 export default class ChainElement {
-  constructor(x, y, value, layout, digit_mode = false, height = 20) {
+  constructor(x, y, value, layout, digit_mode, height) {
     let convertWithWidthFill = num => {
       let str = num.toString(layout.alphabetPower);
       str = "0".repeat(layout.wordLength - str.length) + str;

@@ -1,7 +1,7 @@
 import ChainElement from './ChainElement';
 import {MARGIN_SIZE} from './Layout';
 
-const ELEMENT_HEIGHT = 20;
+export const ELEMENT_HEIGHT = 20;
 
 export default class ElementsStock {
   constructor(layout) {
