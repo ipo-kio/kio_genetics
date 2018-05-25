@@ -35,7 +35,7 @@ export default class Layout {
     let x_offset = this._anchor_width*0.5 + (this._width - this._anchor_width*this._anchors_per_row) / 2;
     let y_offset = this._view.margin + this._anchor_height*0.5;
 
-    this._anchors = new Anchors(this._stage);
+    this._anchors = new Anchors(this._view, stage);
     for(let i=0; i<this._anchors_num; i++) {
       this._anchors.createAnchor(x_offset + i%this._anchors_per_row*this._anchor_width,
         y_offset);

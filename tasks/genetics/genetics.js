@@ -77,7 +77,7 @@ export class Genetics {
 
 
   draw() {
-    let main_view = new MainView(this.kio_api, 2, 3, 2<<4, CANVAS_BASE_WIDTH, CANVAS_BASE_HEIGHT, TextModes.DIGIT).init(this._stage);
+    let main_view = new MainView(this.kioapi, 2, 3, 2<<4, CANVAS_BASE_WIDTH, CANVAS_BASE_HEIGHT, TextModes.DIGIT).init(this._stage);
 
     // Scaling; TODO: resize event
     let real_width = document.body.clientWidth - 6*2; // kio margin (temp)

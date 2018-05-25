@@ -3,7 +3,8 @@ import {Event} from "./EventDispatcherMixin";
 const ANCHOR_STICK_RADIUS = 50;
 
 export default class Anchors {
-  constructor(stage, anchor_size = 2) {
+  constructor(view, stage, anchor_size = 2) {
+    this._view = view;
     this._stage = stage;
     this._anchor_size = anchor_size;
     this._anchors = [];
@@ -24,7 +25,7 @@ export default class Anchors {
 
     if (distances[anchor_index] <= ANCHOR_STICK_RADIUS) {
       element.anchor = free_anchors[anchor_index];
-      new Event("onanchor", element);
+      this._view.fire(new Event("onanchor", element));
     }
   }
 

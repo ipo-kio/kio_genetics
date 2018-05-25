@@ -115,6 +115,8 @@ export default class MainView extends EventDispatcherInterface {
 
   // Draw
   init(stage) {
+    this._stage = stage;
+    
     let delimiter = new createjs.Shape();
     delimiter.graphics.setStrokeStyle(1).beginStroke("rgba(0,0,0,1)").moveTo(this._layout.width, 0).lineTo(this._layout.width, this._view_height);
     stage.addChild(delimiter);
