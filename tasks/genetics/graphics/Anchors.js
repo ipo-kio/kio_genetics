@@ -1,3 +1,5 @@
+import {Event} from "./EventDispatcherMixin";
+
 const ANCHOR_STICK_RADIUS = 50;
 
 export default class Anchors {
@@ -20,8 +22,10 @@ export default class Anchors {
     let distances = free_anchors.map(anchor => anchor.dist(element.container.x + element.width / 2, element.container.y + element.height / 2));
     let anchor_index = distances.reduce((min, val, i, arr) => val < arr[min] ? i : min, 0);
 
-    if (distances[anchor_index] <= ANCHOR_STICK_RADIUS)
+    if (distances[anchor_index] <= ANCHOR_STICK_RADIUS) {
       element.anchor = free_anchors[anchor_index];
+      new Event("onanchor", element);
+    }
   }
 
   getItems() {

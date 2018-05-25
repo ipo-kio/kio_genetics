@@ -1,4 +1,5 @@
 import MainView from "./graphics/MainView"
+import {TextModes} from "./graphics/ChainElement";
 
 const CANVAS_BASE_HEIGHT = 300;
 const CANVAS_BASE_WIDTH = 1600;
@@ -51,7 +52,7 @@ export class Genetics {
   loadSolution(solution) {
     // Пока нет сериализации
     this._stage.removeAllChildren();
-    this.drawGraphics();
+    this.draw();
     /*if (!solution || !solution.x)
       return;
     let x = solution.x;
@@ -71,14 +72,14 @@ export class Genetics {
     $domNode.append($canvas);
 
     this._stage = new createjs.Stage("kio-genetics-canvas");
-    this.drawGraphics();
+    this.draw();
   };
 
 
-  drawGraphics() {
-    let main_view = new MainView(2, 5, 2<<5, CANVAS_BASE_WIDTH, CANVAS_BASE_HEIGHT).init(this._stage);
+  draw() {
+    let main_view = new MainView(this.kio_api, 2, 3, 2<<4, CANVAS_BASE_WIDTH, CANVAS_BASE_HEIGHT, TextModes.DIGIT).init(this._stage);
 
-    // Скалирование; TODO: resize event
+    // Scaling; TODO: resize event
     let real_width = document.body.clientWidth - 6*2; // kio margin (temp)
     let scale_factor = 1;
     if(real_width < main_view.width)
@@ -87,108 +88,7 @@ export class Genetics {
     this._stage.canvas.width = main_view.width * scale_factor;
     this._stage.canvas.height = CANVAS_BASE_HEIGHT * scale_factor;
 
-    // Отрисовка
+    // Draw
     this._stage.update();
-
-    /*for (let i = 0; i < 1 << 3; i++)
-      new ChainElement(this._stage,
-        null,
-        canvas_width - element_width * 2,
-        (canvas_height - (1 << 3) * element_height * 1.5 + element_height * 0.5) / 2 + i * element_height * 1.5,
-        element_width,
-        element_height,
-        this.intToBin(i));
-
-    createjs.Ticker.addEventListener("tick", () => {
-      let canvas = document.getElementById("canvas");
-      if (canvas.width !== window.innerWidth) {
-        stage.scaleX = stage.scaleY = canvas.width/window.innerWidth;
-        canvas.width = window.innerWidth;
-        //this.drawGraphics();
-        console.log(stage.children);
-        stage.update();
-      }
-    });*/
-
-
-    /*// Создаем точки для привязывания
-    let anchors = new Anchors(this._stage, () => {
-      // Проверка на правильность
-      let elements = anchors.getItems();
-      let used_elements = new Array(1 << 3).fill(0);
-      let empty_anchor = false; // Флаг пустого якоря
-      for (const element of elements) {
-        if (!element)
-          empty_anchor = true;
-        else {
-          if (empty_anchor) { // Пропущен элемент в цепочке
-            element.state = ElementStates.BAD;
-            break;
-          }
-          used_elements[parseInt(element.text, 2)]++;
-        }
-      }
-      info_str.text = "Правильно!";
-      let i;
-      for (i = 0; i < used_elements.length; i++) {
-        if (used_elements[i] === 0) {
-          info_str.text = "Не все элементы использованы";
-          break;
-        }
-      }
-      if (elements[0]) {
-        elements[0].state = ElementStates.OK;
-        for (let i = 0; i < elements.length - 1 && elements[i + 1]; i++) {
-          if (elements[i].text[2] === elements[i + 1].text[0])
-            elements[i + 1].state = ElementStates.OK;
-          else {
-            elements[i + 1].state = ElementStates.BAD;
-            info_str.text = "Элементы расположены неправильно";
-          }
-        }
-      }
-
-      if (info_str.text === "Правильно!") {
-        // Пусть пока так будет
-        let elements_count = used_elements.reduce((acc, val) => acc + val);
-        this.kioapi.submitResult({
-          elements: elements_count,
-          average: elements_count / (1<<3)
-        });
-      }
-      this._stage.update();
-    });
-    for (let i=0; i < 1<<4; i++)
-      anchors.createAnchor(element_width*2 + i*element_width*1.1,
-        canvas_height/2);
-
-    // Создаем элементы цепочки
-    for (let i = 0; i < 1 << 3; i++)
-      new ChainElement(this._stage,
-        anchors,
-        canvas_width - element_width * 2,
-        (canvas_height - (1 << 3) * element_height * 1.5 + element_height * 0.5) / 2 + i * element_height * 1.5,
-        element_width,
-        element_height,
-        this.intToBin(i));
-
-    // Строка состояния
-    let info_str = new createjs.Text(null, "1em Courier New", "Black");
-    info_str.set({
-      textAlign: "center",
-      textBaseline: "middle",
-      x: canvas_width / 2,
-      y: 220
-    });
-    this._stage.addChild(info_str);
-
-    /* // Кнопка ресета (пока так :) )
-    let resetButton = new ChainElement(stage, null, 20, 250, 100, 30, "Очистить");
-    resetButton.container.on("click", evt => {
-      stage.removeAllChildren();
-      drawGraphics();
-    });//*/
   }
-
-
 }

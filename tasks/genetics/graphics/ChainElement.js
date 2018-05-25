@@ -1,11 +1,11 @@
 import {Event} from "./EventDispatcherMixin";
 
 export default class ChainElement {
-  constructor(x, y, value, view, digit_mode) {
+  constructor(x, y, value, view) {
     let convertWithWidthFill = num => {
       let str = num.toString(view.alphabetPower);
       str = "0".repeat(view.wordLength - str.length) + str;
-      return digit_mode ? str :
+      return view.digitMode === TextModes.DIGIT ? str :
         str.split('').map(val => "ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(parseInt(val, view.alphabetPower))).join('');
     };
 
@@ -119,4 +119,10 @@ export const States = Object.freeze({
   INDEFINITE: "Black",
   OK: "Green",
   BAD: "Red"
+});
+
+// Режим отрисовки слова
+export const TextModes = Object.freeze({
+  LETTER: Symbol("letter"),
+  DIGIT: Symbol("digit")
 });
