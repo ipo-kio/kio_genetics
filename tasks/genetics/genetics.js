@@ -67,10 +67,10 @@ export class Genetics {
 
   initInterface($domNode) {
     var $canvas =
-      $("<canvas>", { "id": "canvas" }).css({ border: "1px solid gray", backgroundColor: "white" });
+      $("<canvas>", { "id": "kio-genetics-canvas" }).css({ border: "1px solid gray", backgroundColor: "white" });
     $domNode.append($canvas);
 
-    this._stage = new createjs.Stage("canvas");
+    this._stage = new createjs.Stage("kio-genetics-canvas");
     this.drawGraphics();
   };
 

@@ -34,8 +34,25 @@ export default class Layout {
       this._anchors.createAnchor(x_offset + i%this._anchors_per_row*this._anchor_width,
         y_offset);
 
-      if(i%this._anchors_per_row === this._anchors_per_row-1)
+      if(i%this._anchors_per_row === this._anchors_per_row-1 && i+1<this._anchors_num) {
+        let x1 = x_offset + i%this._anchors_per_row*this._anchor_width,
+          y1 = y_offset,
+          x2, y2 = y_offset + this._anchor_height,
+          x3 = x_offset, y3,
+          x4, y4;
+        x2 = x1; y3 = y1; x4 = x3; y4 = y2;
+
+        console.log(x1, y1);
+        console.log(x2, y2);
+        console.log(x3, y3);
+        console.log(x4, y4);
+
+        let curve = new createjs.Shape();
+        curve.graphics.setStrokeStyle(1).beginStroke("rgba(173,216,230,1)").moveTo(x1, y1).bezierCurveTo(x2, y2, x3, y3, x4, y4);
+        stage.addChild(curve);
+
         y_offset += this._anchor_height;
+      }
     }
 
     return this;
