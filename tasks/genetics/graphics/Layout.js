@@ -5,13 +5,13 @@ export default class Layout {
     this._view = view;
     this._width = width;
 
-    this._anchor_width = this._view.elementWidth*1.1;
-    this._anchor_height = this._view.elementHeight*1.5;
-    this._anchors_per_row = Math.round((width - this._view.margin*2) / (this._anchor_width));
+    this._anchor_width = view.elementWidth*1.1;
+    this._anchor_height = view.elementHeight+view.margin;
+    this._anchors_per_row = Math.round((width - view.margin*2) / (this._anchor_width));
     this._anchors_num = Math.ceil(min_anchors_num / this._anchors_per_row) * this._anchors_per_row;
     this._rows = Math.ceil(this._anchors_num / this._anchors_per_row);
 
-    if((this._view.viewHeight - this._view.margin*2) / this._rows < this._anchor_height)
+    if((view.viewHeight - view.margin*2) / this._rows < this._anchor_height)
       throw 'Not enough space to place anchors';
   }
 
@@ -42,14 +42,10 @@ export default class Layout {
           x4, y4;
         x2 = x1; y3 = y1; x4 = x3; y4 = y2;
 
-        console.log(x1, y1);
-        console.log(x2, y2);
-        console.log(x3, y3);
-        console.log(x4, y4);
-
         let curve = new createjs.Shape();
         curve.graphics.setStrokeStyle(1).beginStroke("rgba(173,216,230,1)").moveTo(x1, y1).bezierCurveTo(x2, y2, x3, y3, x4, y4);
         stage.addChild(curve);
+        stage.setChildIndex(curve, 0);
 
         y_offset += this._anchor_height;
       }
