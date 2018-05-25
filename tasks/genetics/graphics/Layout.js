@@ -35,7 +35,7 @@ export default class Layout {
         y_offset);
 
       if(i%this._anchors_per_row === this._anchors_per_row-1 && i+1<this._anchors_num) {
-        let x1 = x_offset + i%this._anchors_per_row*this._anchor_width,
+        /*let x1 = x_offset + i%this._anchors_per_row*this._anchor_width,
           y1 = y_offset,
           x2, y2 = y_offset + this._anchor_height,
           x3 = x_offset, y3,
@@ -44,6 +44,18 @@ export default class Layout {
 
         let curve = new createjs.Shape();
         curve.graphics.setStrokeStyle(1).beginStroke("rgba(173,216,230,1)").moveTo(x1, y1).bezierCurveTo(x2, y2, x3, y3, x4, y4);
+        stage.addChild(curve);
+        stage.setChildIndex(curve, 0);*/
+
+        let x1 = x_offset + i%this._anchors_per_row*this._anchor_width,
+          y1 = y_offset,
+          x2, y2 = y_offset + this._anchor_height/2,
+          x3 = x_offset, y3,
+          x4, y4 = y_offset + this._anchor_height;
+        x2 = x1; y3 = y2; x4 = x3;
+        
+        let curve = new createjs.Shape();
+        curve.graphics.setStrokeStyle(1).beginStroke("rgba(173,216,230,1)").moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).lineTo(x4, y4);
         stage.addChild(curve);
         stage.setChildIndex(curve, 0);
 
