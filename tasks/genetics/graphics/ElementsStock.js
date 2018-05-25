@@ -1,6 +1,5 @@
 import ChainElement from './ChainElement';
 
-
 export default class ElementsStock {
   constructor(view) {
     this._view = view;

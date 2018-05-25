@@ -19,6 +19,10 @@ export default class Layout {
     return this._width;
   }
 
+  checkAnchors(element) {
+    this._anchors.checkAnchors(element);
+  }
+
   init(stage) {
     this._stage = stage;
 

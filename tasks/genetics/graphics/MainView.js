@@ -18,7 +18,7 @@ export default class MainView extends EventDispatcherInterface {
     this._elements_stock = new ElementsStock(this);
     this._layout = new Layout(this, view_width - this._elements_stock.width, anchors_num);
 
-    //this.add_listener("anchor", evt => this._anchors.checkAnchors(evt.source));
+    this.add_listener("onmove", evt => this._layout.checkAnchors(evt.source));
   }
 
   get alphabetPower() {
