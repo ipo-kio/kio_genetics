@@ -12,7 +12,7 @@ export default class ElementsStock {
     this._width = view.margin + this._elem_width*rows;
 
     if(this._width > view.viewWidth / 2)
-      throw 'ElementsStock is wider than half of MainView';
+      throw 'Error: ElementsStock is wider than half of MainView';
   }
 
   get width() {

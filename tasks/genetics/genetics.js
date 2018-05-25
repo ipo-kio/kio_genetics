@@ -18,6 +18,7 @@ export class Genetics {
     console.log('preferred width in problem initialization', preferred_width);
 
     this.kioapi = kioapi;
+    window.kioapi = kioapi;
     this.domNode = domNode;
 
     console.log('problem level is', this.settings.level);
@@ -77,7 +78,14 @@ export class Genetics {
 
 
   draw() {
-    let main_view = new MainView(this.kioapi, 2, 3, 2<<4, CANVAS_BASE_WIDTH, CANVAS_BASE_HEIGHT, TextModes.DIGIT).init(this._stage);
+
+    let main_view;
+    try {
+      main_view = new MainView(this.kioapi, 2, 3, 2<<4, CANVAS_BASE_WIDTH, CANVAS_BASE_HEIGHT, TextModes.LETTER).init(this._stage);
+    }
+    catch(e) {
+      alert(e);
+    }
 
     // Scaling; TODO: resize event
     let real_width = document.body.clientWidth - 6*2; // kio margin (temp)

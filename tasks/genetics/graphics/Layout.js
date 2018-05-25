@@ -12,7 +12,7 @@ export default class Layout {
     this._rows = Math.ceil(this._anchors_num / this._anchors_per_row);
 
     if((view.viewHeight - view.margin*2) / this._rows < this._anchor_height)
-      throw 'Not enough space to place anchors';
+      throw 'Error: not enough space to place anchors';
 
     this._anchor_height = (this._view.viewHeight - this._view.margin*2) / this._rows; // real height (flex)
   }
@@ -41,19 +41,6 @@ export default class Layout {
         y_offset);
 
       if(i%this._anchors_per_row === this._anchors_per_row-1 && i+1<this._anchors_num) {
-        /* //Curve
-        let x1 = x_offset + i%this._anchors_per_row*this._anchor_width,
-          y1 = y_offset,
-          x2, y2 = y_offset + this._anchor_height,
-          x3 = x_offset, y3,
-          x4, y4;
-        x2 = x1; y3 = y1; x4 = x3; y4 = y2;
-
-        let curve = new createjs.Shape();
-        curve.graphics.setStrokeStyle(1).beginStroke("rgba(173,216,230,1)").moveTo(x1, y1).bezierCurveTo(x2, y2, x3, y3, x4, y4);
-        stage.addChild(curve);
-        stage.setChildIndex(curve, 0);*/
-
         let x1 = x_offset + i%this._anchors_per_row*this._anchor_width,
           y1 = y_offset,
           x2, y2 = y_offset + this._anchor_height/2,

@@ -1,10 +1,10 @@
 import Layout from "./Layout";
 import ElementsStock from "./ElementsStock";
-import {States as ElementStates} from "./ChainElement"
+import {States as ElementStates, TextModes} from "./ChainElement"
 import {EventDispatcherInterface} from "./EventDispatcherMixin";
 
 export default class MainView extends EventDispatcherInterface {
-  constructor(kio_api, alphabet_power, word_length, anchors_num, view_width, view_height, digit_mode, margin_size = 25, element_height = 20) {
+  constructor(kio_api, alphabet_power, word_length, anchors_num, view_width, view_height, text_mode, margin_size = 25, element_height = 20) {
     super();
 
     this._kio_api = kio_api;
@@ -12,7 +12,7 @@ export default class MainView extends EventDispatcherInterface {
     this._word_length = word_length;
     this._view_width = view_width;
     this._view_height = view_height;
-    this._digit_mode = digit_mode;
+    this._text_mode = text_mode;
     this._margin_size = margin_size;
     this._element_height = element_height;
 
@@ -41,8 +41,8 @@ export default class MainView extends EventDispatcherInterface {
     return this._view_height;
   }
 
-  get digitMode() {
-    return this._digit_mode;
+  get textMode() {
+    return this._text_mode;
   }
 
   get margin() {
@@ -78,7 +78,11 @@ export default class MainView extends EventDispatcherInterface {
           element.state = ElementStates.BAD;
           break;
         }
-        used_elements[parseInt(element.text, this._alphabet_power)]++;
+
+        let val = element.text;
+        if(this._text_mode === TextModes.LETTER)
+          val = val.split('').map(val => val.charCodeAt(0) - 65).join('');
+        used_elements[parseInt(val, this._alphabet_power)]++;
       }
     }
 
@@ -116,11 +120,12 @@ export default class MainView extends EventDispatcherInterface {
   // Draw
   init(stage) {
     this._stage = stage;
-    
+
     let delimiter = new createjs.Shape();
     delimiter.graphics.setStrokeStyle(1).beginStroke("rgba(0,0,0,1)").moveTo(this._layout.width, 0).lineTo(this._layout.width, this._view_height);
     stage.addChild(delimiter);
 
+    // TODO: info string
     this._layout.init(stage);
     this._elements_stock.init(stage, this._layout.width);
 

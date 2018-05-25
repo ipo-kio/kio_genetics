@@ -5,7 +5,7 @@ export default class ChainElement {
     let convertWithWidthFill = num => {
       let str = num.toString(view.alphabetPower);
       str = "0".repeat(view.wordLength - str.length) + str;
-      return view.digitMode === TextModes.DIGIT ? str :
+      return view.textMode === TextModes.DIGIT ? str :
         str.split('').map(val => "ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(parseInt(val, view.alphabetPower))).join('');
     };
 
