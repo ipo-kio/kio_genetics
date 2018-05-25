@@ -1,50 +1,39 @@
-import {EventDispatcherInterface} from "./EventDispatcherMixin";
 import Anchors from "./Anchors";
-import {ELEMENT_HEIGHT} from "./ElementsStock";
 
-export const MARGIN_SIZE = 30;
+export default class Layout {
+  constructor(view, width, min_anchors_num) {
+    this._view = view;
+    this._width = width;
 
-export default class Layout extends EventDispatcherInterface {
-  constructor(stage, alphabet_power, word_length, anchors_num) {
-    super();
-    this._alphabet_power = alphabet_power;
-    this._word_length = word_length;
-    this._anchors_num = anchors_num;
+    this._anchor_width = this._view.elementWidth*1.1;
+    this._anchor_height = this._view.elementHeight*1.5;
+    this._anchors_per_row = Math.round((width - this._view.margin*2) / (this._anchor_width));
+    this._anchors_num = Math.ceil(min_anchors_num / this._anchors_per_row) * this._anchors_per_row;
+    this._rows = Math.ceil(this._anchors_num / this._anchors_per_row);
+
+    if((this._view.viewHeight - this._view.margin*2) / this._rows < this._anchor_height)
+      throw 'Not enough space to place anchors';
+  }
+
+  get width() {
+    return this._width;
   }
 
   init(stage) {
     this._stage = stage;
 
-    // Разделитель
-    let delimiter = new createjs.Shape();
-    delimiter.graphics.setStrokeStyle(1).beginStroke("rgba(0,0,0,1)").moveTo(this.width, 0).lineTo(this.width, this._stage.canvas.height / this._stage.scale);
-    this._stage.addChild(delimiter);
+    let x_offset = this._anchor_width*0.5 + (this._width - this._anchor_width*this._anchors_per_row) / 2;
+    let y_offset = this._anchor_height*0.5 + (this._view.viewHeight - this._anchor_height*this._rows) / 2;
 
-    // Якори
-    let x = MARGIN_SIZE + this.wordWidth * 0.55;
-    let anchors_in_row = this._stage.canvas.height / this._stage.scale
     this._anchors = new Anchors(this._stage);
     for(let i=0; i<this._anchors_num; i++) {
-      this._anchors.createAnchor(MARGIN_SIZE + this.wordWidth * 0.55 + i * this.wordWidth * 1.1, this._stage.canvas.height / this._stage.scale / 2);
+      this._anchors.createAnchor(x_offset + i%this._anchors_per_row*this._anchor_width,
+        y_offset);
+
+      if(i%this._anchors_per_row === this._anchors_per_row-1)
+        y_offset += this._anchor_height;
     }
-    this.add_listener("anchor", evt => this._anchors.checkAnchors(evt.source));
 
     return this;
-  }
-
-  get width() {
-    return MARGIN_SIZE*2 + this._anchors_num*this.wordWidth*1.1;
-  }
-
-  get alphabetPower() {
-    return this._alphabet_power;
-  }
-
-  get wordLength() {
-    return this._word_length;
-  }
-
-  get wordWidth() {
-    return this.wordLength * 11; // TODO: calc text width
   }
 }

@@ -1,20 +1,20 @@
 import {Event} from "./EventDispatcherMixin";
 
 export default class ChainElement {
-  constructor(x, y, value, layout, digit_mode, height) {
+  constructor(x, y, value, view, digit_mode) {
     let convertWithWidthFill = num => {
-      let str = num.toString(layout.alphabetPower);
-      str = "0".repeat(layout.wordLength - str.length) + str;
+      let str = num.toString(view.alphabetPower);
+      str = "0".repeat(view.wordLength - str.length) + str;
       return digit_mode ? str :
-        str.split('').map(val => "ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(parseInt(val, layout.alphabetPower))).join('');
+        str.split('').map(val => "ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(parseInt(val, view.alphabetPower))).join('');
     };
 
     this._x = x;
     this._y = y;
-    this._layout = layout;
+    this._view = view;
     this._text = convertWithWidthFill(value);
-    this._width  = this._layout.wordWidth;
-    this._height = height;
+    this._width  = view.elementWidth;
+    this._height = view.elementHeight;
     this._params = arguments; // Для репликации
   }
 
@@ -69,7 +69,7 @@ export default class ChainElement {
     // Привязывание к якорям
     this._container.on("pressup", evt => {
        if (this._stage.getChildIndex(evt.currentTarget) !== -1) // Фикс стика при удалении элемента
-         this._layout.fire(new Event("anchor", this));
+         this._view.fire(new Event("anchor", this));
     });
 
     this._stage.addChild(this._container);

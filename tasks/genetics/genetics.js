@@ -1,7 +1,7 @@
-import Layout from "./graphics/Layout";
-import ElementsStock from "./graphics/ElementsStock";
+import MainView from "./graphics/MainView"
 
-const CANVAS_HEIGHT = 300;
+const CANVAS_BASE_HEIGHT = 300;
+const CANVAS_BASE_WIDTH = 1600;
 
 export class Genetics {
 
@@ -76,20 +76,16 @@ export class Genetics {
 
 
   drawGraphics() {
-    // Макет
-    let layout = new Layout(this._stage, 2, 4, 2<<3).init(this._stage);
-    // Элементы цепочек
-    let stock = new ElementsStock(layout).init(this._stage);
+    let main_view = new MainView(2, 5, 2<<5, CANVAS_BASE_WIDTH, CANVAS_BASE_HEIGHT).init(this._stage);
 
-    // Скалирование
-    let width = layout.width + stock.width;
-    console.log(width); // TODO: first value is greater then following ones # wtf?
+    // Скалирование; TODO: resize event
+    let real_width = document.body.clientWidth - 6*2; // kio margin (temp)
     let scale_factor = 1;
-    if(document.body.clientWidth < width)
-      scale_factor = document.body.clientWidth/width;
+    if(real_width < main_view.width)
+      scale_factor = real_width/main_view.width;
     this._stage.scale = scale_factor;
-    this._stage.canvas.width = width * scale_factor;
-    this._stage.canvas.height = CANVAS_HEIGHT * scale_factor;
+    this._stage.canvas.width = main_view.width * scale_factor;
+    this._stage.canvas.height = CANVAS_BASE_HEIGHT * scale_factor;
 
     // Отрисовка
     this._stage.update();
