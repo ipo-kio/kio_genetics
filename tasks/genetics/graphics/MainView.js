@@ -22,7 +22,7 @@ export default class MainView extends EventDispatcherInterface {
     this._layout = new Layout(this, view_width - this._elements_stock.width, anchors_num);
 
     this.add_listener("onmove", evt => this._layout.checkAnchors(evt.source));
-    this.add_listener("onanchor", evt => this.checkSolution(evt.source));
+    this.add_listener("onanchor", () => this.checkSolution());
   }
 
   get alphabetPower() {

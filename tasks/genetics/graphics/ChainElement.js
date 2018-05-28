@@ -11,6 +11,7 @@ export default class ChainElement {
 
     this._x = x;
     this._y = y;
+    this._id = value;
     this._view = view;
     this._text = convertWithWidthFill(value);
     this._width  = view.elementWidth;
@@ -25,7 +26,11 @@ export default class ChainElement {
   get height() {
     return this._height;
   }
-  
+
+  get id() {
+    return this._id;
+  }
+
   get text() {
     return this._text;
   }

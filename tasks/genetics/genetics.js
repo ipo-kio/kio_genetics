@@ -1,3 +1,4 @@
+import './genetics.scss'
 import MainView from "./graphics/MainView"
 import {TextModes} from "./graphics/ChainElement";
 
@@ -52,7 +53,6 @@ export class Genetics {
 
   loadSolution(solution) {
     // Пока нет сериализации
-    this._stage.removeAllChildren();
     this.draw();
     /*if (!solution || !solution.x)
       return;
@@ -68,20 +68,29 @@ export class Genetics {
   };
 
   initInterface($domNode) {
-    var $canvas =
-      $("<canvas>", { "id": "kio-genetics-canvas" }).css({ border: "1px solid gray", backgroundColor: "white" });
-    $domNode.append($canvas);
+    let evt_handler = () => this._redraw();
+    this.$alphabet = $("<input class='number-input' size='3'>").change(evt_handler);
+    this.$length = $("<input class='number-input' size='3'>").change(evt_handler);
+    this.$anchors = $("<input class='number-input' size='3'>").change(evt_handler);
+
+    var $canvas = $("<canvas>", { "id": "kio-genetics-canvas" }).css({ border: "1px solid gray", backgroundColor: "white" });
+    $domNode.append(this.$alphabet, this.$length, this.$anchors, $canvas);
 
     this._stage = new createjs.Stage("kio-genetics-canvas");
-    this.draw();
+    this._redraw();
   };
 
 
-  draw() {
+  _redraw() {
+    this._stage.removeAllChildren();
+
+    let alphabet_power = +this.$alphabet.val() || 2;
+    let word_length = +this.$length.val() || 5;
+    let anchors_min = +this.$anchors.val() || Math.pow(alphabet_power, word_length);
 
     let main_view;
     try {
-      main_view = new MainView(this.kioapi, 2, 3, 2<<4, CANVAS_BASE_WIDTH, CANVAS_BASE_HEIGHT, TextModes.LETTER).init(this._stage);
+      main_view = new MainView(this.kioapi, alphabet_power, word_length, anchors_min, CANVAS_BASE_WIDTH, CANVAS_BASE_HEIGHT, TextModes.LETTER).init(this._stage);
     }
     catch(e) {
       alert(e);
