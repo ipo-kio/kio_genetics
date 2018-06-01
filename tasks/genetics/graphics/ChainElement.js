@@ -61,7 +61,7 @@ export default class ChainElement {
   }
 
   // Draw
-  init(stage) {
+  init(stage, isBase) {
     this._stage = stage;
     let rect = new createjs.Shape();
     this._rect_cmd = rect.graphics.beginFill("White").beginStroke("Black").command;
@@ -95,19 +95,25 @@ export default class ChainElement {
       stage.update();
     });
 
-    // Как только начали перетаскивать - на его месте появится другой // TODO: лучше придумать что-нибудь другое
-    let listener = this._container.on("pressmove", evt => {
-      new ChainElement(...this._params).init(stage);
-      evt.currentTarget.off("pressmove", listener);
-      // Чтобы можно было удалить
-      evt.currentTarget.on("mousedown", evt => {
-        if (evt.nativeEvent.button === 1) { // middle button
-          this.anchor = null;
-          stage.removeChild(evt.currentTarget);
-          stage.update();
-        }
-      })
-    });
+    // Чтобы можно было удалить
+    let onMouseDown = evt => {
+      if (evt.nativeEvent.button === 1) { // middle button
+        this.anchor = null;
+        stage.removeChild(evt.currentTarget);
+        stage.update();
+      }
+    };
+
+    if(isBase) {
+      // Как только начали перетаскивать - на его месте появится другой
+      let listener = this._container.on("pressmove", evt => {
+        new ChainElement(...this._params).init(stage, true);
+        evt.currentTarget.off("pressmove", listener);
+        evt.currentTarget.on("mousedown", onMouseDown);
+      });
+    }
+    else
+      this._container.on("mousedown", onMouseDown);
 
     // Привязывание к якорям
     this._container.on("pressup", evt => {
