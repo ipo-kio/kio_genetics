@@ -97,7 +97,7 @@ export default class MainView extends EventDispatcherInterface {
     if (elements[0]) {
       elements[0].state = ElementStates.OK;
       for (let i = 0; i < elements.length - 1 && elements[i + 1]; i++) {
-        if (elements[i].text[2] === elements[i + 1].text[0])
+        if (elements[i].text[this._word_length-1] === elements[i + 1].text[0])
           elements[i + 1].state = ElementStates.OK;
         else {
           elements[i + 1].state = ElementStates.BAD;
@@ -126,7 +126,6 @@ export default class MainView extends EventDispatcherInterface {
         break;
     items.splice(i+1, items.length-1-i);
     return JSON.stringify( [this._alphabet_power, this._word_length, this._anchors_num, ...items.map(val => val && val.id)] );
-    //return JSON.stringify( [this._alphabet_power, this._word_length, this._anchors_num, ...this._layout.getItems().map(val => val && val.id)] );
   }
 
   _stage;

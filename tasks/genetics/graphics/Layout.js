@@ -34,8 +34,6 @@ export default class Layout {
   }
 
   init(stage) {
-    this._stage = stage;
-
     let x_offset = this._anchor_width*0.5 + (this._width - this._anchor_width*this._anchors_per_row) / 2;
     let y_offset = this._view.margin + this._anchor_height*0.5;
 
