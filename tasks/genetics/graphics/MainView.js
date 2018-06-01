@@ -111,7 +111,7 @@ export default class MainView extends EventDispatcherInterface {
       let elements_count = used_elements.reduce((acc, val) => acc + val);
       this._kio_api.submitResult({
         elements: elements_count,
-        average: elements_count / (1<<3)
+        average: elements_count / this._numbers_amount
       });
     }
 
