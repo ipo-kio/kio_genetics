@@ -46,25 +46,11 @@ export class Genetics {
   };
 
   solution() {
-    /*const x = this.process == null ? 0 : this.process.x;
-    return {x: x};*/
-    return 0;
+    return this._main_view.serialize();
   };
 
   loadSolution(solution) {
-    // Пока нет сериализации
-    this._redraw();
-    /*if (!solution || !solution.x)
-      return;
-    let x = solution.x;
-
-    //проверка, что если при загрузке решения возникает ошибка, то kioapi пересоздаст задачу
-    if (x === "error")
-      x = x.error.error; //must produce exception
-
-    if (x <= 0 || x >= 1000)
-      return;
-    this.$input.val('' + x).change();*/
+    this._redraw(solution);
   };
 
   initInterface($domNode) {
@@ -73,7 +59,7 @@ export class Genetics {
     this.$length = $("<input class='number-input' size='3'>").change(evt_handler);   // Word length
     this.$anchors = $("<input class='number-input' size='3'>").change(evt_handler);  // Minimum anchors num ('ll be rounded to row ceiling)
 
-    var $canvas = $("<canvas>", { "id": "kio-genetics-canvas" }).css({ border: "1px solid gray", backgroundColor: "white" });
+    let $canvas = $("<canvas>", { "id": "kio-genetics-canvas" }).css({ border: "1px solid gray", backgroundColor: "white" });
     $domNode.append(this.$alphabet, this.$length, this.$anchors, $canvas);
 
     this._stage = new createjs.Stage("kio-genetics-canvas");
@@ -82,28 +68,28 @@ export class Genetics {
   };
 
 
-  _redraw(json) {
+  _redraw(solution) {
     this._stage.removeAllChildren();
 
     let alphabet_power = +this.$alphabet.val() || 2;
     let word_length = +this.$length.val() || 5;
     let anchors_min = +this.$anchors.val() || Math.pow(alphabet_power, word_length);
 
-    //try {
-      if(json)
-        this._main_view.init(this._stage, ...JSON.parse(json));
+    try {
+      if(solution)
+        this._main_view.init(this._stage, ...JSON.parse(solution));
       else
         this._main_view.init(this._stage, alphabet_power, word_length, anchors_min);
-   // }
-    //catch(e) {
-    //  alert(e);
-    //}
+    }
+    catch(e) {
+      alert(e);
+    }
 
     // Scaling; TODO: resize event
-    let real_width = document.body.clientWidth - 6*2; // kio margin (temp)
-    let scale_factor = 1;
-    if(real_width < this._main_view.width)
-      scale_factor = real_width/this._main_view.width;
+    let $base = $(".kio-base-box");
+    let real_width = document.body.clientWidth - parseInt($base.css("marginLeft")) - parseInt($base.css("marginRight"));
+    //if(real_width < this._main_view.width) // Только в меньшую сторону
+    let scale_factor = real_width/this._main_view.width;
     this._stage.scale = scale_factor;
     this._stage.canvas.width = this._main_view.width * scale_factor;
     this._stage.canvas.height = CANVAS_BASE_HEIGHT * scale_factor;
