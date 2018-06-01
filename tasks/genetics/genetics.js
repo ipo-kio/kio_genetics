@@ -69,9 +69,9 @@ export class Genetics {
 
   initInterface($domNode) {
     let evt_handler = () => this._redraw();
-    this.$alphabet = $("<input class='number-input' size='3'>").change(evt_handler);
-    this.$length = $("<input class='number-input' size='3'>").change(evt_handler);
-    this.$anchors = $("<input class='number-input' size='3'>").change(evt_handler);
+    this.$alphabet = $("<input class='number-input' size='3'>").change(evt_handler); // Alphabet power
+    this.$length = $("<input class='number-input' size='3'>").change(evt_handler);   // Word length
+    this.$anchors = $("<input class='number-input' size='3'>").change(evt_handler);  // Minimum anchors num ('ll be rounded to row ceiling)
 
     var $canvas = $("<canvas>", { "id": "kio-genetics-canvas" }).css({ border: "1px solid gray", backgroundColor: "white" });
     $domNode.append(this.$alphabet, this.$length, this.$anchors, $canvas);
@@ -95,6 +95,8 @@ export class Genetics {
     catch(e) {
       alert(e);
     }
+
+    window.serialize = () => main_view.serialize();
 
     // Scaling; TODO: resize event
     let real_width = document.body.clientWidth - 6*2; // kio margin (temp)

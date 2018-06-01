@@ -4,12 +4,15 @@ import {States as ElementStates, TextModes} from "./ChainElement"
 import {EventDispatcherInterface} from "./EventDispatcherMixin";
 
 export default class MainView extends EventDispatcherInterface {
+  _kio_api;
+
   constructor(kio_api, alphabet_power, word_length, anchors_num, view_width, view_height, text_mode, margin_size = 25, element_height = 20) {
     super();
 
     this._kio_api = kio_api;
     this._alphabet_power = alphabet_power;
     this._word_length = word_length;
+    this._anchors_num = anchors_num;
     this._view_width = view_width;
     this._view_height = view_height;
     this._text_mode = text_mode;
@@ -19,7 +22,7 @@ export default class MainView extends EventDispatcherInterface {
     this._numbers_amount = Math.pow(this._alphabet_power, this._word_length);
 
     this._elements_stock = new ElementsStock(this);
-    this._layout = new Layout(this, view_width - this._elements_stock.width, anchors_num);
+    this._layout = new Layout(this, view_width - this._elements_stock.width);
 
     this.add_listener("onmove", evt => this._layout.checkAnchors(evt.source));
     this.add_listener("onanchor", () => this.checkSolution());
@@ -115,6 +118,10 @@ export default class MainView extends EventDispatcherInterface {
     }
 
     this._stage.update();
+  }
+
+  serialize() {
+    return JSON.stringify( [this._alphabet_power, this._word_length, this._anchors_num, ...this._layout.getItems().map(val => val && val.id)] );
   }
 
   // Draw
