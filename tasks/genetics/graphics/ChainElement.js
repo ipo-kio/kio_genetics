@@ -116,6 +116,8 @@ export default class ChainElement {
     });
 
     stage.addChild(this._container);
+
+    return this;
   }
 }
 

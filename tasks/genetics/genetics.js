@@ -53,7 +53,7 @@ export class Genetics {
 
   loadSolution(solution) {
     // Пока нет сериализации
-    this.draw();
+    this._redraw();
     /*if (!solution || !solution.x)
       return;
     let x = solution.x;
@@ -77,34 +77,35 @@ export class Genetics {
     $domNode.append(this.$alphabet, this.$length, this.$anchors, $canvas);
 
     this._stage = new createjs.Stage("kio-genetics-canvas");
+    this._main_view = new MainView(this.kioapi, CANVAS_BASE_WIDTH, CANVAS_BASE_HEIGHT, TextModes.LETTER);
     this._redraw();
   };
 
 
-  _redraw() {
+  _redraw(json) {
     this._stage.removeAllChildren();
 
     let alphabet_power = +this.$alphabet.val() || 2;
     let word_length = +this.$length.val() || 5;
     let anchors_min = +this.$anchors.val() || Math.pow(alphabet_power, word_length);
 
-    let main_view;
-    try {
-      main_view = new MainView(this.kioapi, alphabet_power, word_length, anchors_min, CANVAS_BASE_WIDTH, CANVAS_BASE_HEIGHT, TextModes.LETTER).init(this._stage);
-    }
-    catch(e) {
-      alert(e);
-    }
-
-    window.serialize = () => main_view.serialize();
+    //try {
+      if(json)
+        this._main_view.init(this._stage, ...JSON.parse(json));
+      else
+        this._main_view.init(this._stage, alphabet_power, word_length, anchors_min);
+   // }
+    //catch(e) {
+    //  alert(e);
+    //}
 
     // Scaling; TODO: resize event
     let real_width = document.body.clientWidth - 6*2; // kio margin (temp)
     let scale_factor = 1;
-    if(real_width < main_view.width)
-      scale_factor = real_width/main_view.width;
+    if(real_width < this._main_view.width)
+      scale_factor = real_width/this._main_view.width;
     this._stage.scale = scale_factor;
-    this._stage.canvas.width = main_view.width * scale_factor;
+    this._stage.canvas.width = this._main_view.width * scale_factor;
     this._stage.canvas.height = CANVAS_BASE_HEIGHT * scale_factor;
 
     // Draw

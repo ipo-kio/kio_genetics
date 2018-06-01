@@ -4,28 +4,26 @@ import {States as ElementStates, TextModes} from "./ChainElement"
 import {EventDispatcherInterface} from "./EventDispatcherMixin";
 
 export default class MainView extends EventDispatcherInterface {
-  _kio_api;
 
-  constructor(kio_api, alphabet_power, word_length, anchors_num, view_width, view_height, text_mode, margin_size = 25, element_height = 20) {
+  _kio_api;
+  _view_width;
+  _view_height;
+  _text_mode;
+  _margin_size;
+  _element_height;
+
+  constructor(kio_api, view_width, view_height, text_mode, margin_size = 25, element_height = 20) {
     super();
 
     this._kio_api = kio_api;
-    this._alphabet_power = alphabet_power;
-    this._word_length = word_length;
-    this._anchors_num = anchors_num;
     this._view_width = view_width;
     this._view_height = view_height;
     this._text_mode = text_mode;
     this._margin_size = margin_size;
     this._element_height = element_height;
 
-    this._numbers_amount = Math.pow(this._alphabet_power, this._word_length);
-
-    this._elements_stock = new ElementsStock(this);
-    this._layout = new Layout(this, view_width - this._elements_stock.width);
-
-    this.add_listener("onmove", evt => this._layout.checkAnchors(evt.source));
-    this.add_listener("onanchor", () => this.checkSolution());
+    this.add_listener("onmove", (evt) => this._layout.checkAnchors(evt.source));
+    this.add_listener("onanchor", (evt) => this._checkSolution(evt.source));
   }
 
   get alphabetPower() {
@@ -68,7 +66,7 @@ export default class MainView extends EventDispatcherInterface {
     return this._layout.width + this._elements_stock.width;
   }
 
-  checkSolution() {
+  _checkSolution(element) {
     let result = 'Правильно!';
     let elements = this._layout.getItems();
     let used_elements = new Array(this._numbers_amount).fill(0);
@@ -121,12 +119,35 @@ export default class MainView extends EventDispatcherInterface {
   }
 
   serialize() {
-    return JSON.stringify( [this._alphabet_power, this._word_length, this._anchors_num, ...this._layout.getItems().map(val => val && val.id)] );
+    let items = this._layout.getItems();
+    let i;
+    for(i=items.length-1; i>=0; i--)
+      if(items[i])
+        break;
+    items.splice(i+1, items.length-1-i);
+    return JSON.stringify( [this._alphabet_power, this._word_length, this._anchors_num, ...items.map(val => val && val.id)] );
+    //return JSON.stringify( [this._alphabet_power, this._word_length, this._anchors_num, ...this._layout.getItems().map(val => val && val.id)] );
   }
 
+  _stage;
+  _alphabet_power;
+  _word_length;
+  _anchors_num;
+  _numbers_amount;
+  _elements_stock;
+  _layout;
+
   // Draw
-  init(stage) {
+  init(stage, alphabet_power, word_length, anchors_num, ...anchorStates) {
     this._stage = stage;
+    this._alphabet_power = alphabet_power;
+    this._word_length = word_length;
+    this._anchors_num = anchors_num;
+
+    this._numbers_amount = Math.pow(this._alphabet_power, this._word_length);
+
+    this._elements_stock = new ElementsStock(this);
+    this._layout = new Layout(this, this._view_width - this._elements_stock.width);
 
     let delimiter = new createjs.Shape();
     delimiter.graphics.setStrokeStyle(1).beginStroke("rgba(0,0,0,1)").moveTo(this._layout.width, 0).lineTo(this._layout.width, this._view_height);
@@ -135,6 +156,9 @@ export default class MainView extends EventDispatcherInterface {
     // TODO: info string
     this._layout.init(stage);
     this._elements_stock.init(stage, this._layout.width);
+
+    if(anchorStates)
+      this._layout.deserialize(anchorStates);
 
     return this;
   }

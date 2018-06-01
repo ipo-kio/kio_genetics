@@ -1,4 +1,5 @@
 import {Event} from "./EventDispatcherMixin";
+import ChainElement from './ChainElement';
 
 const ANCHOR_STICK_RADIUS = 50;
 
@@ -31,6 +32,14 @@ export default class Anchors {
 
   getItems() {
     return this._anchors.map(val => val.item);
+  }
+
+  deserialize(anchorStates) {
+    for(let i=0; i<anchorStates.length; i++) {
+      if(anchorStates[i] !== null)
+        new ChainElement(0, 0, anchorStates[i], this._view).init(this._stage).anchor = this._anchors[i];
+    }
+    this._view.fire(new Event("onanchor", null));
   }
 }
 
