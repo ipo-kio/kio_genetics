@@ -65,7 +65,7 @@ export class Genetics {
     $domNode.append($notice, this.$alphabet, this.$length, this.$anchors, $canvas);
 
     this._stage = new createjs.Stage("kio-genetics-canvas");
-    this._main_view = new MainView(this.kioapi, CANVAS_BASE_WIDTH, CANVAS_BASE_HEIGHT, TextModes.LETTER);
+    this._main_view = new MainView(this.kioapi, CANVAS_BASE_WIDTH, CANVAS_BASE_HEIGHT, TextModes.DIGIT);
     this._redraw();
   };
 
@@ -101,11 +101,14 @@ export class Genetics {
   }
   
   // ONLY FOR TESTS!
-  // Решение текущей задачи через эйлеров путь
+  // Решение текущей задачи через Эйлеров путь
   solve() {
+    let power = this._main_view.alphabetPower;
+    let length = this._main_view.wordLength;
+
    let adjacency_matrix = [];
-    for (let i=0; i<this._main_view.alphabetPower; i++)
-      adjacency_matrix[i] = Array(this._main_view.alphabetPower).fill(true);
+    for (let i=0; i<power; i++)
+      adjacency_matrix[i] = Array(power).fill(true);
 
     let eulerian_path = [];
     (function find_path(vertex) {
@@ -123,17 +126,22 @@ export class Genetics {
     //////////////////////////////////////////////////////////////
     
     // Решение для длины=2
-    let solution = [];
+    let general_solution = [];
     for (let i=0; i<eulerian_path.length-1; i++)
-      solution[i] = eulerian_path[i]*this._main_view.alphabetPower + eulerian_path[i+1];
-    console.log(solution);
-    
-    
-    //// TODO: Вот тут что-то намутить надо. Преобразовать первичные + сделать concat в цикле N раз
-    ////for (let i=1; i<solution.length; i++)
-    ////  if (solution[i]%Math.pow(this._main_view.alphabetPower, this._main_view.wordLength-1)>=this._main_view.alphabetPower)
-    ////    solution[i] += this._main_view.alphabetPower*parseInt(eulerian_path[i]/Math.pow(this._main_view.alphabetPower, this._main_view.wordLength-1));
-    
+      general_solution[i] = eulerian_path[i]*power + eulerian_path[i+1];
+    console.log(general_solution);
+
+    // Подгонка в зависимости от длины слова
+    let adjust_power = Math.pow(power, length-1);
+    for (let i=1; i<general_solution.length; i++)
+      general_solution[i] += Math.floor(general_solution[i]/power)*(adjust_power - power);
+
+    // Т.к. наше решение - Эйлеров цикл, мы можем задействовать все остальные слова и получить полное решение
+    let solution = general_solution.slice(0);
+    adjust_power = Math.pow(power, length-2);
+    for (let i=1; i<adjust_power; i++)
+      solution = solution.concat(general_solution.map(vertex => vertex+i*power));
+
     let json = JSON.stringify( [this._main_view.alphabetPower, this._main_view.wordLength, this._main_view.anchorsNum, ...solution] );
     //////////////////////////////////////////////////////////////
     console.log(json);
