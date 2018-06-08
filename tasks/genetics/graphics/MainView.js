@@ -33,6 +33,10 @@ export default class MainView extends EventDispatcherInterface {
   get wordLength() {
     return this._word_length;
   }
+  
+  get anchorsNum() {
+    return this._anchors_num;
+  }
 
   get viewWidth() {
     return this._view_width;
