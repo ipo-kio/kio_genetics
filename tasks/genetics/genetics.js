@@ -54,13 +54,15 @@ export class Genetics {
   };
 
   initInterface($domNode) {
+    let $notice = $("<p>").text("Поля ввода используются для тестирования и не являются частью интерфейса");
+
     let evt_handler = () => this._redraw();
-    this.$alphabet = $("<input class='number-input' size='3'>").change(evt_handler); // Alphabet power
-    this.$length = $("<input class='number-input' size='3'>").change(evt_handler);   // Word length
-    this.$anchors = $("<input class='number-input' size='3'>").change(evt_handler);  // Minimum anchors num ('ll be rounded to row ceiling)
+    this.$alphabet = $("<input class='number-input'>").change(evt_handler); // Alphabet power
+    this.$length = $("<input class='number-input'>").change(evt_handler);   // Word length
+    this.$anchors = $("<input class='number-input'>").change(evt_handler);  // Minimum anchors num ('ll be rounded to row ceiling)
 
     let $canvas = $("<canvas>", { "id": "kio-genetics-canvas" }).css({ border: "1px solid gray", backgroundColor: "white" });
-    $domNode.append(this.$alphabet, this.$length, this.$anchors, $canvas);
+    $domNode.append($notice, this.$alphabet, this.$length, this.$anchors, $canvas);
 
     this._stage = new createjs.Stage("kio-genetics-canvas");
     this._main_view = new MainView(this.kioapi, CANVAS_BASE_WIDTH, CANVAS_BASE_HEIGHT, TextModes.LETTER);
@@ -103,13 +105,13 @@ export class Genetics {
   solve() {
    let adjacency_matrix = [];
     for (let i=0; i<this._main_view.alphabetPower; i++)
-      adjacency_matrix[i] = Array(this._main_view.alphabetPower).fill(1);
+      adjacency_matrix[i] = Array(this._main_view.alphabetPower).fill(true);
 
     let eulerian_path = [];
     (function find_path(vertex) {
       for (let i=0; i<adjacency_matrix.length; i++) {
-        if (adjacency_matrix[vertex][i] == 1) {
-          adjacency_matrix[vertex][i] = 0;
+        if (adjacency_matrix[vertex][i]) {
+          adjacency_matrix[vertex][i] = false;
           find_path(i);
         }
       }
