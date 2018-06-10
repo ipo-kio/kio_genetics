@@ -50,22 +50,20 @@ export class Genetics {
   };
 
   loadSolution(solution) {
+    return;
     this._redraw(solution);
   };
 
   initInterface($domNode) {
     let $notice = $("<p>").text("Поля ввода используются для тестирования и не являются частью интерфейса");
-
-    let evt_handler = () => this._redraw();
-    this.$alphabet = $("<input class='number-input'>").change(evt_handler); // Alphabet power
-    this.$length = $("<input class='number-input'>").change(evt_handler);   // Word length
-    this.$anchors = $("<input class='number-input'>").change(evt_handler);  // Minimum anchors num ('ll be rounded to row ceiling)
+    this.$alphabet = $("<input class='number-input'>").change(() => this._redraw()); // Alphabet power
+    this.$length = $("<input class='number-input'>").change(() => this._redraw());   // Word length
 
     let $canvas = $("<canvas>", { "id": "kio-genetics-canvas" }).css({ border: "1px solid gray", backgroundColor: "white" });
-    $domNode.append($notice, this.$alphabet, this.$length, this.$anchors, $canvas);
+    $domNode.append($notice, this.$alphabet, this.$length, $canvas);
 
     this._stage = new createjs.Stage("kio-genetics-canvas");
-    this._main_view = new MainView(this.kioapi, CANVAS_BASE_WIDTH, CANVAS_BASE_HEIGHT, TextModes.DIGIT);
+    this._main_view = new MainView(this.kioapi, CANVAS_BASE_WIDTH, CANVAS_BASE_HEIGHT, TextModes.LETTER);
     this._redraw();
   };
 
@@ -73,24 +71,23 @@ export class Genetics {
   _redraw(solution) {
     this._stage.removeAllChildren();
 
-    let alphabet_power = +this.$alphabet.val() || 2;
-    let word_length = +this.$length.val() || 5;
-    let anchors_min = +this.$anchors.val() || Math.pow(alphabet_power, word_length);
+    let alphabet_power = +this.$alphabet.val() || 4;
+    let word_length = +this.$length.val() || 2;
 
     try {
       if(solution)
         this._main_view.init(this._stage, ...JSON.parse(solution));
       else
-        this._main_view.init(this._stage, alphabet_power, word_length, anchors_min);
+        this._main_view.init(this._stage, alphabet_power, word_length);
     }
     catch(e) {
+      console.trace();
       alert(e);
     }
 
     // Scaling; TODO: resize event
     let $base = $(".kio-base-box");
     let real_width = document.body.clientWidth - parseInt($base.css("marginLeft")) - parseInt($base.css("marginRight"));
-    //if(real_width < this._main_view.width) // Только в меньшую сторону
     let scale_factor = real_width/this._main_view.width;
     this._stage.scale = scale_factor;
     this._stage.canvas.width = this._main_view.width * scale_factor;

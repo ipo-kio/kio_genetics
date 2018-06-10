@@ -25,9 +25,9 @@ export default class ElementsStock {
 
     for(let i=0; i<this._view.numbersAmount; i++) {
       new ChainElement(this._view.margin + x_offset, y_offset + i % this._elem_per_column * this._elem_height,
-        i, this._view).init(stage, true);
+        i, this._view).init(stage);
 
-      if(i % this._elem_per_column === this._elem_per_column-1)
+      if(i % this._elem_per_column === this._elem_per_column - 1)
         x_offset += this._elem_width;
     }
 

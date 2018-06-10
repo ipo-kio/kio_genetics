@@ -16,7 +16,6 @@ export default class ChainElement {
     this._text = convertWithWidthFill(value);
     this._width  = view.elementWidth;
     this._height = view.elementHeight;
-    this._params = arguments; // Для репликации
   }
 
   get width() {
@@ -61,7 +60,7 @@ export default class ChainElement {
   }
 
   // Draw
-  init(stage, isBase) {
+  init(stage) {
     this._stage = stage;
     let rect = new createjs.Shape();
     this._rect_cmd = rect.graphics.beginFill("White").beginStroke("Black").command;
@@ -85,41 +84,15 @@ export default class ChainElement {
     // Перетаскиваем
     this._container.on("pressmove", evt => {
       this.state = States.INDEFINITE;
-      if (this._anchor) {
-        this._anchor.item = null;
-        this._anchor = null;
-      }
+      this.anchor = null;
       evt.currentTarget.x = evt.stageX / stage.scale - this._width / 2;
       evt.currentTarget.y = evt.stageY / stage.scale - this._height / 2;
-      stage.setChildIndex(evt.currentTarget, stage.numChildren-1);
+      stage.setChildIndex(evt.currentTarget, stage.numChildren - 1);
       stage.update();
     });
 
-    // Чтобы можно было удалить
-    let onMouseDown = evt => {
-      if (evt.nativeEvent.button === 1) { // middle button
-        this.anchor = null;
-        stage.removeChild(evt.currentTarget);
-        stage.update();
-      }
-    };
-
-    if(isBase) {
-      // Как только начали перетаскивать - на его месте появится другой
-      let listener = this._container.on("pressmove", evt => {
-        new ChainElement(...this._params).init(stage, true);
-        evt.currentTarget.off("pressmove", listener);
-        evt.currentTarget.on("mousedown", onMouseDown);
-      });
-    }
-    else
-      this._container.on("mousedown", onMouseDown);
-
     // Привязывание к якорям
-    this._container.on("pressup", evt => {
-      if (this._stage.getChildIndex(evt.currentTarget) !== -1) // Фикс стика при удалении элемента
-        this._view.fire(new Event("onmove", this));
-    });
+    this._container.on("pressup", evt => this._view.fire(new Event("onmove", this)));
 
     stage.addChild(this._container);
 

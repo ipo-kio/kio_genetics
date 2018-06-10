@@ -135,17 +135,15 @@ export default class MainView extends EventDispatcherInterface {
   _stage;
   _alphabet_power;
   _word_length;
-  _anchors_num;
   _numbers_amount;
   _elements_stock;
   _layout;
 
   // Draw
-  init(stage, alphabet_power, word_length, anchors_num, ...anchorStates) {
+  init(stage, alphabet_power, word_length, ...anchorStates) {
     this._stage = stage;
     this._alphabet_power = alphabet_power;
     this._word_length = word_length;
-    this._anchors_num = anchors_num;
 
     this._numbers_amount = Math.pow(this._alphabet_power, this._word_length);
 

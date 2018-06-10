@@ -8,7 +8,7 @@ export default class Layout {
     this._anchor_width = view.elementWidth*1.1;
     this._anchor_height = view.elementHeight*1.5; // min height
     this._anchors_per_row = Math.round((width - view.margin*2) / (this._anchor_width));
-    this._anchors_num = Math.ceil(view._anchors_num / this._anchors_per_row) * this._anchors_per_row;
+    this._anchors_num = Math.ceil(view.numbersAmount / this._anchors_per_row) * this._anchors_per_row;
     this._rows = Math.ceil(this._anchors_num / this._anchors_per_row);
 
     if((view.viewHeight - view.margin*2) / this._rows < this._anchor_height)
