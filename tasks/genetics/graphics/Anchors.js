@@ -34,10 +34,10 @@ export default class Anchors {
     return this._anchors.map(val => val.item);
   }
 
-  deserialize(anchorStates) {
-    for(let i=0; i<anchorStates.length; i++) {
-      if(anchorStates[i] !== null)
-        new ChainElement(0, 0, anchorStates[i], this._view).init(this._stage).anchor = this._anchors[i];
+  deserialize(anchor_states) {
+    for(let i=0; i<anchor_states.length; i++) {
+      if(anchor_states[i] !== null)
+        this._view.elements[anchor_states[i]].anchor = this._anchors[i];
     }
     this._view.fire(new Event("onanchor", null));
   }

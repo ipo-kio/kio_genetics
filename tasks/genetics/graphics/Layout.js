@@ -29,8 +29,8 @@ export default class Layout {
     this._anchors.checkAnchors(element);
   }
 
-  deserialize(anchorStates) {
-    this._anchors.deserialize(anchorStates);
+  deserialize(anchor_states) {
+    this._anchors.deserialize(anchor_states);
   }
 
   init(stage) {

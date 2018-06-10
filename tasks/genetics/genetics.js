@@ -16,6 +16,7 @@ export class Genetics {
   };
 
   initialize(domNode, kioapi, preferred_width) {
+    window.kioapi = kioapi; // ONLY FOR TESTS!
     window.genetics = this; // ONLY FOR TESTS!
     console.log('preferred width in problem initialization', preferred_width);
 
@@ -50,7 +51,6 @@ export class Genetics {
   };
 
   loadSolution(solution) {
-    return;
     this._redraw(solution);
   };
 
@@ -139,7 +139,7 @@ export class Genetics {
     for (let i=1; i<adjust_power; i++)
       solution = solution.concat(general_solution.map(vertex => vertex+i*power));
 
-    let json = JSON.stringify( [this._main_view.alphabetPower, this._main_view.wordLength, this._main_view.anchorsNum, ...solution] );
+    let json = JSON.stringify( [this._main_view.alphabetPower, this._main_view.wordLength, ...solution] );
     //////////////////////////////////////////////////////////////
     console.log(json);
     //////////////////////////////////////////////////////////////

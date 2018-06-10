@@ -70,6 +70,10 @@ export default class MainView extends EventDispatcherInterface {
     return this._layout.width + this._elements_stock.width;
   }
 
+  get elements() {
+    return this._elements;
+  }
+
   _checkSolution(element) {
     let result = 'Правильно!';
     let elements = this._layout.getItems();
@@ -129,24 +133,26 @@ export default class MainView extends EventDispatcherInterface {
       if(items[i])
         break;
     items.splice(i+1, items.length-1-i);
-    return JSON.stringify( [this._alphabet_power, this._word_length, this._anchors_num, ...items.map(val => val && val.id)] );
+    return JSON.stringify( [this._alphabet_power, this._word_length, ...items.map(val => val && val.id)] );
   }
 
   _stage;
   _alphabet_power;
   _word_length;
   _numbers_amount;
+  _elements;
   _elements_stock;
   _layout;
 
   // Draw
-  init(stage, alphabet_power, word_length, ...anchorStates) {
+  init(stage, alphabet_power, word_length, ...anchor_states) {
     this._stage = stage;
     this._alphabet_power = alphabet_power;
     this._word_length = word_length;
 
     this._numbers_amount = Math.pow(this._alphabet_power, this._word_length);
 
+    this._elements = [];
     this._elements_stock = new ElementsStock(this);
     this._layout = new Layout(this, this._view_width - this._elements_stock.width);
 
@@ -158,8 +164,8 @@ export default class MainView extends EventDispatcherInterface {
     this._layout.init(stage);
     this._elements_stock.init(stage, this._layout.width);
 
-    if(anchorStates)
-      this._layout.deserialize(anchorStates);
+    if(anchor_states)
+      this._layout.deserialize(anchor_states);
 
     return this;
   }

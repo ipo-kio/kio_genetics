@@ -24,8 +24,8 @@ export default class ElementsStock {
     let y_offset = this._view.elementHeight*0.5 + (this._view.viewHeight - this._elem_height*this._elem_per_column) / 2;
 
     for(let i=0; i<this._view.numbersAmount; i++) {
-      new ChainElement(this._view.margin + x_offset, y_offset + i % this._elem_per_column * this._elem_height,
-        i, this._view).init(stage);
+      this._view.elements.push(new ChainElement(this._view.margin + x_offset, y_offset + i % this._elem_per_column * this._elem_height,
+        i, this._view).init(stage));
 
       if(i % this._elem_per_column === this._elem_per_column - 1)
         x_offset += this._elem_width;
