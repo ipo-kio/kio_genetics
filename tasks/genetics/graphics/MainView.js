@@ -75,65 +75,24 @@ export default class MainView extends EventDispatcherInterface {
   }
 
   _checkSolution(element) {
-    let result = 'Правильно!';
-    let elements = this._layout.getItems();
-    let used_elements = new Array(this._numbers_amount).fill(0);
-    let empty_anchor = false; // Флаг пустого якоря
-    for (const element of elements) {
-      if (!element)
-        empty_anchor = true;
-      else {
-        if (empty_anchor) {
-          element.state = ElementStates.BAD;
-          break;
-        }
-
-        let val = element.text;
-        if(this._text_mode === TextModes.LETTER)
-          val = val.split('').map(val => val.charCodeAt(0) - 65).join('');
-        used_elements[parseInt(val, this._alphabet_power)]++;
-      }
-    }
-
-    let i;
-    for (i = 0; i < used_elements.length; i++) {
-      if (used_elements[i] === 0) {
-        result = "Не все элементы использованы";
-        break;
-      }
-    }
-    if (elements[0]) {
-      elements[0].state = ElementStates.OK;
-      for (let i = 0; i < elements.length - 1 && elements[i + 1]; i++) {
-        if (elements[i].text[this._word_length-1] === elements[i + 1].text[0])
-          elements[i + 1].state = ElementStates.OK;
-        else {
-          elements[i + 1].state = ElementStates.BAD;
-          result = "Элементы расположены неправильно";
-        }
-      }
-    }
-
-    if (result === "Правильно!") {
-      // Пусть пока так будет
-      let elements_count = used_elements.reduce((acc, val) => acc + val);
-      this._kio_api.submitResult({
-        elements: elements_count,
-        average: elements_count / this._numbers_amount
-      });
-    }
-
+    this._layout.checkSolution(element);
     this._stage.update();
   }
 
   serialize() {
     let items = this._layout.getItems();
     let i;
-    for(i=items.length-1; i>=0; i--)
-      if(items[i])
+    for (i = items.length-1; i >= 0; i--)
+      if (items[i])
         break;
     items.splice(i+1, items.length-1-i);
     return JSON.stringify( [this._alphabet_power, this._word_length, ...items.map(val => val && val.id)] );
+  }
+
+  submitResult() {
+    this._kio_api.submitResult({
+      elements: this._numbers_amount
+    });
   }
 
   _stage;
@@ -160,7 +119,6 @@ export default class MainView extends EventDispatcherInterface {
     delimiter.graphics.setStrokeStyle(1).beginStroke("rgba(0,0,0,1)").moveTo(this._layout.width, 0).lineTo(this._layout.width, this._view_height);
     stage.addChild(delimiter);
 
-    // TODO: info string
     this._layout.init(stage);
     this._elements_stock.init(stage, this._layout.width);
 

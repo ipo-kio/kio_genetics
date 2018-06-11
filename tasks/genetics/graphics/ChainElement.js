@@ -1,6 +1,16 @@
 import {Event} from "./EventDispatcherMixin";
 
 export default class ChainElement {
+
+  _x;
+  _y;
+  _id;
+  _view;
+  _text;
+  _width;
+  _height;
+  _anchor;
+
   constructor(x, y, value, view) {
     let convertWithWidthFill = num => {
       let str = num.toString(view.alphabetPower);

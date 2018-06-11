@@ -34,15 +34,15 @@ export class Genetics {
       {
         name: "elements",
         title: "Количество цепочек",
-        ordering: 'minimize',
+        ordering: 'maximize',
         view: val => val || 0
-      },
+      }/*, не актуально - задача поменялась
       {
         name: "average",
         title: "Среднее кол-во каждой цепочки",
         ordering: 'minimize',
         view: val => val ? val.toFixed(2) : 0
-      }
+      }*/
     ];
   };
 
@@ -59,10 +59,10 @@ export class Genetics {
     this.$alphabet = $("<input class='number-input'>").change(() => this._redraw()); // Alphabet power
     this.$length = $("<input class='number-input'>").change(() => this._redraw());   // Word length
 
-    let $canvas = $("<canvas>", { "id": "kio-genetics-canvas" }).css({ border: "1px solid gray", backgroundColor: "white" });
+    let $canvas = $("<canvas>", { "id": "kio-genetics-layout" }).css({ border: "1px solid gray", backgroundColor: "white" });
     $domNode.append($notice, this.$alphabet, this.$length, $canvas);
 
-    this._stage = new createjs.Stage("kio-genetics-canvas");
+    this._stage = new createjs.Stage("kio-genetics-layout");
     this._main_view = new MainView(this.kioapi, CANVAS_BASE_WIDTH, CANVAS_BASE_HEIGHT, TextModes.LETTER);
     this._redraw();
   };

@@ -1,5 +1,5 @@
 import {Event} from "./EventDispatcherMixin";
-import ChainElement from './ChainElement';
+import ChainElement, {States as ElementStates} from './ChainElement';
 
 const ANCHOR_STICK_RADIUS = 50;
 
@@ -12,7 +12,7 @@ export default class Anchors {
   }
 
   createAnchor(x, y) {
-    this._anchors.push(new Anchor(x, y));
+    this._anchors.push(new Anchor(this._anchors.length, x, y));
 
     let anchor = new createjs.Shape();
     anchor.graphics.beginFill("Black").drawCircle(x, y, this._anchor_size);
@@ -41,13 +41,46 @@ export default class Anchors {
     }
     this._view.fire(new Event("onanchor", null));
   }
+
+  checkSolution(element) {
+    let elements;
+    if(element)
+      elements = [element];
+    else
+      elements = this._view.elements;
+
+    for(element of elements) {
+      if(!element.anchor)
+        continue;
+      let prev = this._anchors[element.anchor.index - 1];
+      if (!prev || !prev.item)
+        element.state = ElementStates.OK;
+      else if (prev.item.text[this._view.wordLength - 1] === element.text[0])
+        element.state = ElementStates.OK;
+      else
+        element.state = ElementStates.BAD;
+    }
+
+    let i;
+    for (i = 0; i < this._view.elements.length; i++)
+      if(!this._view.elements[i].anchor)
+        break;
+    if(i === this._view.elements.length)
+      this._view.submitResult();
+  }
 }
 
+
 class Anchor {
-  constructor(x, y) {
+  constructor(index, x, y) {
+    this._index = index;
     this._x = x;
     this._y = y;
     this._item = null;
+  }
+
+  get index() {
+    return this._index;
   }
 
   get item() {
