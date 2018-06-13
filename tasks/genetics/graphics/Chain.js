@@ -26,7 +26,7 @@ export default class Chain {
       let elem = this._steps[this._steps.length - 1].elem;
       elem.active = true;
       elem.state = ElementStates.OK;
-      elem._onpressmove_popwrap = elem.container.on("pressmove", elem._onpressmove_popwrap);
+      elem.onpressmove_popwrap = elem.container.on("pressmove", elem.onpressmove_popwrap);
       this._chain = this._steps[this._steps.length - 1].chain.slice(0);
 
       if (last_step.shift) {
@@ -45,7 +45,8 @@ export default class Chain {
     if(this._steps.length > 0) {
       let prev_elem =  this._steps[this._steps.length - 1].elem;
       prev_elem.active = false;
-      prev_elem.container.off("pressmove", prev_elem._onpressmove_popwrap);
+      prev_elem.container.off("pressmove", prev_elem.onpressmove_popwrap);
+      this._container.drag({currentTarget: true, localBounds: true});
     }
 
     let step = {elem:elem};
@@ -64,10 +65,7 @@ export default class Chain {
     step.chain = this._chain.slice(0);
     this._steps.push(step);
     elem.state = ElementStates.OK;
-    elem._onpressmove_popwrap = elem.container.on("pressmove", () => this._pop(), null, true);
-
-    if(this._container.width + Settings.MARGIN*2 > this._view.layout.container.width)
-      this._view.layout.rearrangeScroll(this._view.elemLen * Settings.BLOCK_WIDTH + Settings.MARGIN);
+    elem.onpressmove_popwrap = elem.container.on("pressmove", () => this._pop(), null, true);
   }
 
   stick(elem) {

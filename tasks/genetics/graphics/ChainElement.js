@@ -1,6 +1,11 @@
 import * as Settings from "./../settings";
 
 export default class ChainElement {
+
+  _view;
+  _text;
+  _container;
+
   constructor(view, id) {
     /** @param {Number} num */
     let convertWithWidthFill = num => {
@@ -44,6 +49,30 @@ export default class ChainElement {
     return this._container;
   }
 
+  get text() {
+    return this._text;
+  }
+
+  _onpressmove_wrap;
+  _onpressup_wrap;
+  _onpressmove_popwrap;
+  _onpressmove_dragwrap;
+
+  get onpressmove_popwrap() {
+    return this._onpressmove_popwrap;
+  }
+
+  set onpressmove_popwrap(val) {
+    this._onpressmove_popwrap = val;
+  }
+
+  get onpressmove_dragwrap() {
+    return this._onpressmove_popwrap;
+  }
+  set onpressmove_dragwrap(val) {
+    this._onpressmove_dragwrap = val;
+  }
+
   set active(val) {
     if(this._active !== val)
     {
@@ -81,6 +110,7 @@ export default class ChainElement {
       if (this._view.layout.container.getChildIndex(obj) === -1) {
         obj.addTo(this._view.layout.container);
         obj.mov(-this._view.layout.desiredX, -Settings.MARGIN);
+        this._view.layout.rearrangeScroll(obj.x + obj.width);
       }
 
       this._view.layout.stick(elem);

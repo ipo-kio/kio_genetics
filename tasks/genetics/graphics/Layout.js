@@ -69,8 +69,11 @@ export default class Layout {
     this._chain.stick(elem);
   }
 
-  rearrangeScroll(val) {
-    this._layout_width += val;
+  rearrangeScroll(width) {
+    if(width <= this._layout_width)
+      return;
+
+    this._layout_width = width + Settings.MARGIN;
     this._back.widthOnly = this._layout_width;
 
     // Удаляем старый
@@ -90,8 +93,8 @@ export default class Layout {
         width: this._viewer_width / this._layout_width * this._viewer_width,
         height: Settings.SCROLL_HEIGHT,
         label: "",
-        color: this._frame.silver,
-        rollColor: this._frame.tin,
+        color: this._frame.tin,
+        rollColor: this._frame.grey,
         corner: Settings.SCROLL_HEIGHT * .5
       }).expand();
     else
@@ -105,7 +108,7 @@ export default class Layout {
       button: this._button,
       barLength: this._viewer_width,
       barWidth: Settings.SCROLL_HEIGHT,
-      barColor: this._frame.light,
+      barColor: this._frame.silver,
       vertical: false,
       inside: true
     })
