@@ -1,68 +1,123 @@
-import Anchors from "./Anchors";
+import * as Settings from "./../settings";
+import Chain from "./Chain"
 
 export default class Layout {
-  constructor(view, width) {
+
+  _view;
+  _frame;
+  _viewer_width;
+  _viewer_height;
+  _mask;
+  _container;
+
+  constructor(view, width, height) {
     this._view = view;
-    this._width = width;
+    this._frame = view.frame;
+    this._viewer_width = this._layout_width = width - Settings.MARGIN;
+    this._viewer_height = height;
 
-    this._anchor_width = view.elementWidth*1.1;
-    this._anchor_height = view.elementHeight*1.5; // min height
-    this._anchors_per_row = Math.round((width - view.margin*2) / (this._anchor_width));
-    this._anchors_num = Math.ceil(view.numbersAmount / this._anchors_per_row) * this._anchors_per_row;
-    this._rows = Math.ceil(this._anchors_num / this._anchors_per_row);
+    this._mask = new Rectangle(this._viewer_width, this._viewer_height)
+      .pos(Settings.MARGIN, Settings.MARGIN, this._frame.stage);
 
-    if((view.viewHeight - view.margin*2) / this._rows < this._anchor_height)
-      throw 'Error: not enough space to place anchors';
+    this._container = new Container()
+      .pos(this._mask.x, this._mask.y, this._frame.stage)
+      .setMask(this._mask);
 
-    this._anchor_height = (this._view.viewHeight - this._view.margin*2) / this._rows; // real height (flex)
+    this._back = new Rectangle(this._layout_width, this._viewer_height, this._frame.lighter)
+      .addTo(this._container);
+
+    this._desiredX = this._container.x;
+    let damp = new Damp(this._desiredX, .2);
+    Ticker.add(() => {
+      this._container.x = damp.convert(this._desiredX);
+    }, this._frame.stage);
+
+    this._chain = new Chain(view);
+    this._chain.container.center(this._container);
+    this._chain.container.pos(Settings.MARGIN);
+
+    document.onwheel = e => {
+      if (!this._scrollbar)
+        return;
+      this._scrollbar.currentValue += e.deltaY > 0 ? 40 : -40;
+      this._doScroll();
+    };
+  }
+
+  get container() {
+    return this._container;
+  }
+
+  get mask() {
+    return this._mask;
   }
 
   get width() {
-    return this._width;
+    return this._viewer_width + Settings.MARGIN*2;
   }
 
-  getItems() {
-    return this._anchors.getItems();
+  get desiredX() {
+    return this._desiredX;
   }
 
-  checkAnchors(element) {
-    this._anchors.checkAnchors(element);
+  hitTest(obj) {
+    return obj.x > Settings.MARGIN && obj.x < Settings.MARGIN + this._viewer_width &&
+      obj.y > Settings.MARGIN && obj.y < Settings.MARGIN + this._viewer_height;
+  };
+
+  stick(elem) {
+    this._chain.stick(elem);
   }
 
-  checkSolution(element) {
-    this._anchors.checkSolution(element);
-  }
+  rearrangeScroll(val) {
+    this._layout_width += val;
+    this._back.widthOnly = this._layout_width;
 
-  deserialize(anchor_states) {
-    this._anchors.deserialize(anchor_states);
-  }
-
-  init(stage) {
-    let x_offset = this._anchor_width*0.5 + (this._width - this._anchor_width*this._anchors_per_row) / 2;
-    let y_offset = this._view.margin + this._anchor_height*0.5;
-
-    this._anchors = new Anchors(this._view, stage);
-    for(let i=0; i<this._anchors_num; i++) {
-      this._anchors.createAnchor(x_offset + i%this._anchors_per_row*this._anchor_width,
-        y_offset);
-
-      if(i%this._anchors_per_row === this._anchors_per_row-1 && i+1<this._anchors_num) {
-        let x1 = x_offset + i%this._anchors_per_row*this._anchor_width,
-          y1 = y_offset,
-          x2, y2 = y_offset + this._anchor_height/2,
-          x3 = x_offset, y3,
-          x4, y4 = y_offset + this._anchor_height;
-        x2 = x1; y3 = y2; x4 = x3;
-
-        let line = new createjs.Shape();
-        line.graphics.setStrokeStyle(1).beginStroke("rgba(173,216,230,1)").moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).lineTo(x4, y4);
-        stage.addChild(line);
-        stage.setChildIndex(line, 0);
-
-        y_offset += this._anchor_height;
-      }
+    // Удаляем старый
+    if (this._scrollbar) {
+      this._scrollbar.removeFrom(this._frame.stage);
+      this._scrollbar.dispose();
+      this._scrollbar = null;
     }
 
-    return this;
+    // Не нужен
+    if (this._layout_width <= this._viewer_width)
+      return;
+
+    // Ресайзим кнопку
+    if (!this._button)
+      this._button = new Button({
+        width: this._viewer_width / this._layout_width * this._viewer_width,
+        height: Settings.SCROLL_HEIGHT,
+        label: "",
+        color: this._frame.silver,
+        rollColor: this._frame.tin,
+        corner: Settings.SCROLL_HEIGHT * .5
+      }).expand();
+    else
+      this._button.width = this._viewer_width / this._layout_width * this._viewer_width;
+
+    // Создаем новый
+    this._scrollbar = new Slider({
+      min: 0,
+      max: this._layout_width - this._viewer_width,
+      step: 0,
+      button: this._button,
+      barLength: this._viewer_width,
+      barWidth: Settings.SCROLL_HEIGHT,
+      barColor: this._frame.light,
+      vertical: false,
+      inside: true
+    })
+      .addTo(this._frame.stage)
+      .pos(Settings.MARGIN, Settings.MARGIN + this._viewer_height);
+
+    this._scrollbar.on("change", () => this._doScroll());
+    this._scrollbar.currentValue = this._scrollbar.max;
+    this._doScroll();
+  }
+
+  _doScroll() {
+    this._desiredX = this._mask.x - this._scrollbar.currentValue;
   }
 }

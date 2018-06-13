@@ -1,12 +1,7 @@
 import './genetics.scss'
 import MainView from "./graphics/MainView"
-import {TextModes} from "./graphics/ChainElement";
-
-const CANVAS_BASE_HEIGHT = 300;
-const CANVAS_BASE_WIDTH = 1600;
 
 export class Genetics {
-
   constructor(settings) {
     this.settings = settings;
   }
@@ -47,45 +42,46 @@ export class Genetics {
   };
 
   solution() {
-    return this._main_view.serialize();
+    //return this._main_view.serialize();
   };
 
   loadSolution(solution) {
-    this._redraw(solution);
+    //this._redraw(solution);
   };
 
   initInterface($domNode) {
     let $notice = $("<p>").text("Поля ввода используются для тестирования и не являются частью интерфейса");
     this.$alphabet = $("<input class='number-input'>").change(() => this._redraw()); // Alphabet power
     this.$length = $("<input class='number-input'>").change(() => this._redraw());   // Word length
+    let $holder = $("<div id='kio-genetics-holder'>");
+    $domNode.append($notice, this.$alphabet, this.$length, $holder);
 
-    let $canvas = $("<canvas>", { "id": "kio-genetics-layout" }).css({ border: "1px solid gray", backgroundColor: "white" });
-    $domNode.append($notice, this.$alphabet, this.$length, $canvas);
-
-    this._stage = new createjs.Stage("kio-genetics-layout");
-    this._main_view = new MainView(this.kioapi, CANVAS_BASE_WIDTH, CANVAS_BASE_HEIGHT, TextModes.LETTER);
-    this._redraw();
-  };
+    this._frame = new Frame("kio-genetics-holder");
+    this._frame.on("ready", () => {
+      OPTIMIZE = true;
+      Ticker.update = true;
+      this._redraw();
+    });
+  }
 
 
   _redraw(solution) {
-    this._stage.removeAllChildren();
+    let power = +this.$alphabet.val() || 2;
+    let len = +this.$length.val() || 5;
 
-    let alphabet_power = +this.$alphabet.val() || 4;
-    let word_length = +this.$length.val() || 2;
-
+    this._frame.stage.removeAllChildren();
     try {
       if(solution)
-        this._main_view.init(this._stage, ...JSON.parse(solution));
+        this._main_view = new MainView(this._frame, ...JSON.parse(solution));
       else
-        this._main_view.init(this._stage, alphabet_power, word_length);
+        this._main_view = new MainView(this._frame, power, len);
     }
     catch(e) {
       console.trace();
       alert(e);
     }
 
-    // Scaling; TODO: resize event
+   /* // Scaling; TODO: resize event
     let $base = $(".kio-base-box");
     let real_width = document.body.clientWidth - parseInt($base.css("marginLeft")) - parseInt($base.css("marginRight"));
     let scale_factor = real_width/this._main_view.width;
@@ -94,7 +90,7 @@ export class Genetics {
     this._stage.canvas.height = CANVAS_BASE_HEIGHT * scale_factor;
 
     // Draw
-    this._stage.update();
+    this._stage.update();*/
   }
   
   // ONLY FOR TESTS!
