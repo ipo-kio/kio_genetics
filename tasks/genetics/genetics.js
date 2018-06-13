@@ -62,6 +62,11 @@ export class Genetics {
       Ticker.update = true;
       this._redraw();
     });
+    this._frame.on("resize", () => {
+      if(this._main_view)
+        this._main_view.resize();
+      this._frame.stage.update();
+    });
   }
 
 
