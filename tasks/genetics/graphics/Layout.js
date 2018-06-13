@@ -35,6 +35,7 @@ export default class Layout {
     this._chain = new Chain(view);
     this._chain.container.center(this._container);
     this._chain.container.pos(Settings.MARGIN);
+    this.chainDrag = true;
 
     document.onwheel = e => {
       if (!this._scrollbar)
@@ -125,5 +126,13 @@ export default class Layout {
 
   _doScroll() {
     this._desiredX = this._mask.x - this._scrollbar.currentValue;
+  }
+
+  serialize() {
+    return this._chain.serialize();
+  }
+
+  deserialize(json) {
+    this._chain.deserialize(json);
   }
 }

@@ -3,6 +3,7 @@ import * as Settings from "./../settings";
 export default class ChainElement {
 
   _view;
+  _id;
   _text;
   _container;
 
@@ -11,12 +12,16 @@ export default class ChainElement {
     let convertWithWidthFill = num => {
       let str = num.toString(view.elemPow);
       str = "0".repeat(view.elemLen - str.length) + str;
-      return Settings.textMode === TextModes.DIGIT ? str :
-        str.split('').map(val => "ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(parseInt(val, view.elemPow))).join('');
+      return {
+        digit: str,
+        letter: str.split('').map(val => "ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(parseInt(val, view.elemPow))).join('')
+      };
     };
 
     this._view = view;
-    this._text = convertWithWidthFill(id);
+    this._id = id;
+    let text = convertWithWidthFill(id);
+    this._text = text.digit;
     this._container = new Rectangle(Settings.BLOCK_WIDTH*view.elemLen, Settings.ELEMENT_HEIGHT, "White", "Black");
 
     let delimiter = new createjs.Shape();
@@ -26,7 +31,7 @@ export default class ChainElement {
       rect.x = Settings.BLOCK_WIDTH*i;
 
       let label = new Label({
-        text:this._text[i],
+        text: Settings.textMode === TextModes.LETTER ? text.letter[i] : text.digit[i],
         size:15,
         font:"Lucida Console",
         color:"black"
@@ -49,6 +54,10 @@ export default class ChainElement {
     return this._container;
   }
 
+  get id() {
+    return this._id;
+  }
+
   get text() {
     return this._text;
   }
@@ -56,7 +65,6 @@ export default class ChainElement {
   _onpressmove_wrap;
   _onpressup_wrap;
   _onpressmove_popwrap;
-  _onpressmove_dragwrap;
 
   get onpressmove_popwrap() {
     return this._onpressmove_popwrap;
@@ -66,12 +74,6 @@ export default class ChainElement {
     this._onpressmove_popwrap = val;
   }
 
-  get onpressmove_dragwrap() {
-    return this._onpressmove_popwrap;
-  }
-  set onpressmove_dragwrap(val) {
-    this._onpressmove_dragwrap = val;
-  }
 
   set active(val) {
     if(this._active !== val)
@@ -111,10 +113,10 @@ export default class ChainElement {
       if (this._view.layout.container.getChildIndex(obj) === -1) {
         obj.addTo(this._view.layout.container);
         obj.mov(-this._view.layout.desiredX, -Settings.MARGIN);
-        this._view.layout.rearrangeScroll(obj.x + obj.width);
       }
 
       this._view.layout.stick(elem);
+      this._view.layout.rearrangeScroll(obj.x + obj.width);
     }
   };
 

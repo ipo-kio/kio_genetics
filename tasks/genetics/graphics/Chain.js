@@ -48,7 +48,7 @@ export default class Chain {
       prev_elem.container.off("pressmove", prev_elem.onpressmove_popwrap);
     }
 
-    let step = {elem:elem};
+    let step = { elem:elem, idx: idx };
     if (idx <= this._chain.length) {
       this._chain.splice(idx, this._view.elemLen, ...elem._text);
       elem.container.pos(Settings.BLOCK_WIDTH * idx, 0, this._container);
@@ -65,6 +65,8 @@ export default class Chain {
     this._steps.push(step);
     elem.state = ElementStates.OK;
     elem.onpressmove_popwrap = elem.container.on("pressmove", () => this._pop(), null, true);
+
+    zog(this._steps, this._chain);
   }
 
   stick(elem) {
@@ -129,5 +131,18 @@ export default class Chain {
       if (fit)
         this._apply(elem, idx);
     }
+  }
+
+  serialize() {
+    return JSON.stringify(this._steps.map(step => ({ id: step.elem.id, idx: step.idx })));
+  }
+
+  deserialize(json) {
+    let steps = JSON.parse(json);
+    for(const step of steps)
+      this._apply(this._view.elements[step.id], step.idx);
+
+    this._container.pos(Settings.MARGIN);
+    this._view.layout.rearrangeScroll(this._container.x + this._container.width);
   }
 }
