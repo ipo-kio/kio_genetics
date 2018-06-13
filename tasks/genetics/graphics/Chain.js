@@ -46,7 +46,6 @@ export default class Chain {
       let prev_elem =  this._steps[this._steps.length - 1].elem;
       prev_elem.active = false;
       prev_elem.container.off("pressmove", prev_elem.onpressmove_popwrap);
-      this._container.drag({currentTarget: true, localBounds: true});
     }
 
     let step = {elem:elem};

@@ -48,8 +48,11 @@ export default class Layout {
     return this._container;
   }
 
-  get mask() {
-    return this._mask;
+  set chainDrag(val) {
+    if(val)
+      this._chain.container.drag({currentTarget: true, localBounds: true});
+    else
+      this._chain.container.noDrag();
   }
 
   get width() {

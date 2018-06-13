@@ -104,6 +104,7 @@ export default class ChainElement {
   };
 
   _onpressup(elem) {
+    this._view.layout.chainDrag = true;
     let obj = elem._container;
     obj.color = "rgba(255,255,255,1)";
     if (this._view.layout.hitTest(obj)) {
@@ -118,6 +119,7 @@ export default class ChainElement {
   };
 
   _onpressmove(elem) {
+    this._view.layout.chainDrag = false;
     let obj = elem._container;
     obj.color = "rgba(255,255,255,0.3)";
     this._movToStage(elem);
