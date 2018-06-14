@@ -16,7 +16,7 @@ export class Genetics {
     window.genetics = this; // ONLY FOR TESTS!
     console.log('preferred width in problem initialization', preferred_width);
 
-    this.kioapi = kioapi;
+    this.kio_api = kioapi;
     this.domNode = domNode;
 
     console.log('problem level is', this.settings.level);
@@ -28,17 +28,17 @@ export class Genetics {
   parameters() {
     return [
       {
-        name: "elements",
-        title: "Количество цепочек",
+        name: "elements_num",
+        title: "Количество элементов",
         ordering: 'maximize',
         view: val => val || 0
-      }/*, не актуально - задача поменялась
+      },
       {
-        name: "average",
-        title: "Среднее кол-во каждой цепочки",
+        name: "length",
+        title: "Длина цепочки",
         ordering: 'minimize',
-        view: val => val ? val.toFixed(2) : 0
-      }*/
+        view: val => val || 0
+      }
     ];
   }
 
@@ -56,7 +56,7 @@ export class Genetics {
   }
 
   initInterface($domNode) {
-    this._main_view = new MainView();
+    this._main_view = new MainView(this.kio_api);
 
     let onchange = () => this._try_init(null, power, len);
 
@@ -79,11 +79,6 @@ export class Genetics {
       Ticker.update = true;
       this._try_init(this._frame, power, len);
     });
-    /*this._frame.on("resize", () => {
-      if(this._main_view)
-        this._main_view.resize();
-      this._frame.stage.update();
-    });*/
   }
 
   _try_init() {
@@ -94,17 +89,6 @@ export class Genetics {
       console.trace();
       alert(e);
     }
-
-   /* // Scaling; TODO: resize event
-    let $base = $(".kio-base-box");
-    let real_width = document.body.clientWidth - parseInt($base.css("marginLeft")) - parseInt($base.css("marginRight"));
-    let scale_factor = real_width/this._main_view.width;
-    this._stage.scale = scale_factor;
-    this._stage.canvas.width = this._main_view.width * scale_factor;
-    this._stage.canvas.height = CANVAS_BASE_HEIGHT * scale_factor;
-
-    // Draw
-    this._stage.update();*/
   }
   
   // ONLY FOR TESTS!

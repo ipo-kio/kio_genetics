@@ -4,6 +4,7 @@ import ElementsStock from "./ElementsStock";
 
 export default class MainView {
 
+  _kio_api;
   _frame;
   _elem_pow;
   _elem_len;
@@ -11,6 +12,10 @@ export default class MainView {
   _stock;
   _elements;
   _init_solution;
+
+  constructor(kio_api) {
+    this._kio_api = kio_api;
+  }
 
   init(frame, power, length, solution) {
     if (solution || !this._init_solution) {
@@ -64,5 +69,12 @@ export default class MainView {
 
   serialize() {
     return this._layout ? this._layout.serialize() : [];
+  }
+
+  submitResult(len) {
+    this._kio_api.submitResult({
+      elements_num: this._elem_num,
+      length: len
+    });
   }
 }
