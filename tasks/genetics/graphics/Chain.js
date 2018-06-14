@@ -37,8 +37,6 @@ export default class Chain {
     }
     else
       this._chain = [];
-
-    zog(this._steps);
   }
 
   _apply(elem, idx) {
@@ -66,7 +64,10 @@ export default class Chain {
     elem.state = ElementStates.OK;
     elem.onpressmove_popwrap = elem.container.on("pressmove", () => this._pop(), null, true);
 
-    zog(this._steps, this._chain);
+    zog(this._steps.length, this._view.elemNum);
+    if(this._steps.length === this._view.elemNum)
+      this._view.submitResult(this._chain.length);
+    //zog(this._steps, this._chain);
   }
 
   stick(elem) {
@@ -134,13 +135,13 @@ export default class Chain {
   }
 
   serialize() {
-    return JSON.stringify(this._steps.map(step => ({ id: step.elem.id, idx: step.idx })));
+    return this._steps.map(step => ([step.elem.id, step.idx ]));
   }
 
   deserialize(json) {
     let steps = JSON.parse(json);
     for(const step of steps)
-      this._apply(this._view.elements[step.id], step.idx);
+      this._apply(this._view.elements[step[0]], step[1]);
 
     this._container.pos(Settings.MARGIN);
     this._view.layout.rearrangeScroll(this._container.x + this._container.width);

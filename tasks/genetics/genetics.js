@@ -50,15 +50,24 @@ export class Genetics {
   }
 
   loadSolution(solution) {
-    let {settings: {pow, len}, steps} = JSON.parse(solution);
-    if (pow && len && steps)
-      this._try_init(null, pow, len, steps);
+    try {
+      let {settings: {pow, len}, steps} = JSON.parse(solution);
+      if (pow && len && steps)
+        this._try_init(null, pow, len, steps);
+    }
+    catch (e) {
+      console.log("error loading", solution);
+    }
   }
 
   initInterface($domNode) {
     this._main_view = new MainView(this.kio_api);
 
-    let onchange = () => this._try_init(null, power, len);
+    let onchange = () => {
+      let power = +this.$alphabet.val() || 2;
+      let len = +this.$length.val() || 5;
+      this._try_init(null, power, len);
+    };
 
     let $notice = $("<p>").text("Поля ввода используются для тестирования и не являются частью интерфейса");
     this.$alphabet = $("<input class='number-input'>").change(onchange); // Alphabet power
@@ -69,11 +78,7 @@ export class Genetics {
     let power = +this.$alphabet.val() || 2;
     let len = +this.$length.val() || 5;
 
-    if(window.__workaround)
-      window.__workaround.dispose();
-    window.__workaround = this._frame =
-      new Frame("kio-genetics-holder", Settings.CANVAS_RELATIVE_WIDTH, Settings.CANVAS_RELATIVE_HEIGHT);
-
+    this._frame = new Frame("kio-genetics-holder", Settings.CANVAS_RELATIVE_WIDTH, Settings.CANVAS_RELATIVE_HEIGHT);
     this._frame.on("ready", () => {
       OPTIMIZE = true;
       Ticker.update = true;

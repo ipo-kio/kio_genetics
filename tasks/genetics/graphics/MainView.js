@@ -6,8 +6,8 @@ export default class MainView {
 
   _kio_api;
   _frame;
-  _elem_pow;
-  _elem_len;
+  _elem_pow = Settings.DEFAULT_POW;
+  _elem_len = Settings.DEFAULT_LEN;
   _layout;
   _stock;
   _elements;
@@ -25,13 +25,15 @@ export default class MainView {
       this._init_solution = solution;
     }
 
-    if(frame)
+    if (frame)
       this._frame = frame;
 
     if (this._frame) {
         this._redraw();
-        if (this._init_solution)
+        if (this._init_solution) {
           this._layout.deserialize(this._init_solution);
+          this._init_solution = false;
+        }
       }
   }
 
@@ -39,7 +41,7 @@ export default class MainView {
     this._frame.stage.removeAllChildren();
     this._elements = [];
     this._stock = new ElementsStock(this);
-    this._layout = new Layout(this, this._frame.width - this._stock.width, 300);
+    this._layout = new Layout(this, this._frame.width - this._stock.width, Settings.LAYOUT_HEIGHT);
     this._stock.init(this._layout.width);
   }
 
@@ -68,7 +70,7 @@ export default class MainView {
   }
 
   serialize() {
-    return this._layout ? this._layout.serialize() : [];
+    return JSON.stringify(this._layout ? this._layout.serialize() : []);
   }
 
   submitResult(len) {
