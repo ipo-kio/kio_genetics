@@ -1,4 +1,5 @@
 import './genetics.scss'
+import * as Settings from "./settings";
 import MainView from "./graphics/MainView"
 
 export class Genetics {
@@ -68,7 +69,11 @@ export class Genetics {
     let power = +this.$alphabet.val() || 2;
     let len = +this.$length.val() || 5;
 
-    this._frame = new Frame("kio-genetics-holder");
+    if(window.__workaround)
+      window.__workaround.dispose();
+    window.__workaround = this._frame =
+      new Frame("kio-genetics-holder", Settings.CANVAS_RELATIVE_WIDTH, Settings.CANVAS_RELATIVE_HEIGHT);
+
     this._frame.on("ready", () => {
       OPTIMIZE = true;
       Ticker.update = true;
