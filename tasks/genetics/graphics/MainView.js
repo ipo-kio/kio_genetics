@@ -7,27 +7,35 @@ export default class MainView {
   _frame;
   _elem_pow;
   _elem_len;
-  _stage;
   _layout;
   _stock;
   _elements;
+  _init_solution;
 
-  constructor(frame, power, length) {
-    window.mainview = this;
-    this._frame = frame;
-    this._elem_pow = power;
-    this._elem_len = length;
-    this._elem_num = Math.pow(power, length);
-    this._stage = frame.stage;
+  init(frame, power, length, solution) {
+    if (solution || !this._init_solution) {
+      this._elem_pow = power;
+      this._elem_len = length;
+      this._elem_num = Math.pow(power, length);
+      this._init_solution = solution;
+    }
 
-    this._elements = [];
-    this._stock = new ElementsStock(this);
-    this._layout = new Layout(this, frame.width - this._stock.width, 300);
-    this._stock.init(this._stage, this._layout.width);
+    if(frame)
+      this._frame = frame;
+
+    if (this._frame) {
+        this._redraw();
+        if (this._init_solution)
+          this._layout.deserialize(this._init_solution);
+      }
   }
 
-  resize() {
-    // TODO
+  _redraw() {
+    this._frame.stage.removeAllChildren();
+    this._elements = [];
+    this._stock = new ElementsStock(this);
+    this._layout = new Layout(this, this._frame.width - this._stock.width, 300);
+    this._stock.init(this._layout.width);
   }
 
   get frame() {
@@ -55,10 +63,6 @@ export default class MainView {
   }
 
   serialize() {
-    return this.layout.serialize();
-  }
-
-  deserialze(json) {
-    this.layout.deserialize(json);
+    return this._layout ? this._layout.serialize() : [];
   }
 }

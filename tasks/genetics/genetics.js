@@ -8,7 +8,7 @@ export class Genetics {
 
   id() {
     return "genetics";
-  };
+  }
 
   initialize(domNode, kioapi, preferred_width) {
     window.kioapi = kioapi; // ONLY FOR TESTS!
@@ -22,7 +22,7 @@ export class Genetics {
 
     const $domNode = $(this.domNode);
     this.initInterface($domNode);
-  };
+  }
 
   parameters() {
     return [
@@ -39,47 +39,51 @@ export class Genetics {
         view: val => val ? val.toFixed(2) : 0
       }*/
     ];
-  };
+  }
 
   solution() {
-    //return this._main_view.serialize();
-  };
+      return JSON.stringify({
+        settings: { pow: this._main_view.elemPow, len: this._main_view.elemLen },
+        steps: this._main_view.serialize()
+      });
+  }
 
   loadSolution(solution) {
-    //this._redraw(solution);
-  };
+    let {settings: {pow, len}, steps} = JSON.parse(solution);
+    if (pow && len && steps)
+      this._try_init(null, pow, len, steps);
+  }
 
   initInterface($domNode) {
+    this._main_view = new MainView();
+
+    let onchange = () => this._try_init(null, power, len);
+
     let $notice = $("<p>").text("Поля ввода используются для тестирования и не являются частью интерфейса");
-    this.$alphabet = $("<input class='number-input'>").change(() => this._redraw()); // Alphabet power
-    this.$length = $("<input class='number-input'>").change(() => this._redraw());   // Word length
+    this.$alphabet = $("<input class='number-input'>").change(onchange); // Alphabet power
+    this.$length = $("<input class='number-input'>").change(onchange);   // Word length
     let $holder = $("<div id='kio-genetics-holder'>");
     $domNode.append($notice, this.$alphabet, this.$length, $holder);
+
+    let power = +this.$alphabet.val() || 2;
+    let len = +this.$length.val() || 5;
 
     this._frame = new Frame("kio-genetics-holder");
     this._frame.on("ready", () => {
       OPTIMIZE = true;
       Ticker.update = true;
-      this._redraw();
+      this._try_init(this._frame, power, len);
     });
-    this._frame.on("resize", () => {
+    /*this._frame.on("resize", () => {
       if(this._main_view)
         this._main_view.resize();
       this._frame.stage.update();
-    });
+    });*/
   }
 
-
-  _redraw(solution) {
-    let power = +this.$alphabet.val() || 2;
-    let len = +this.$length.val() || 5;
-
-    this._frame.stage.removeAllChildren();
+  _try_init() {
     try {
-      if(solution)
-        this._main_view = new MainView(this._frame, ...JSON.parse(solution));
-      else
-        this._main_view = new MainView(this._frame, power, len);
+      this._main_view.init(...Array.from(arguments));
     }
     catch(e) {
       console.trace();
@@ -100,7 +104,7 @@ export class Genetics {
   
   // ONLY FOR TESTS!
   // Решение текущей задачи через Эйлеров путь
-  solve() {
+  /*solve() {
     let power = this._main_view.alphabetPower;
     let length = this._main_view.wordLength;
 
@@ -145,5 +149,5 @@ export class Genetics {
     console.log(json);
     //////////////////////////////////////////////////////////////
     this.loadSolution(json);
-  }
+  }*/
 }

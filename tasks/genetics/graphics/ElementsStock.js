@@ -21,11 +21,11 @@ export default class ElementsStock {
   }
 
   // Draw
-  init(stage, x_offset) {
+  init(x_offset) {
     let y_offset = Settings.ELEMENT_HEIGHT*0.5 + (this._view.frame.height - this._elem_height*this._elem_per_column) / 2;
     for(let i=0; i<this._view.elemNum; i++) {
       this._view.elements[i] = new ChainElement(this._view, i);
-      this._view.elements[i].container.pos(Settings.MARGIN + x_offset, y_offset + i % this._elem_per_column * this._elem_height, stage);
+      this._view.elements[i].container.pos(Settings.MARGIN + x_offset, y_offset + i % this._elem_per_column * this._elem_height, this._view.frame.stage);
 
       if(i % this._elem_per_column === this._elem_per_column - 1)
         x_offset += this._elem_width;
