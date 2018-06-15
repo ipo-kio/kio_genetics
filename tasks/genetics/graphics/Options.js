@@ -3,16 +3,14 @@ import {TextModes} from "./ChainElement";
 
 export default class Options {
 
-  _view;
-  _combs;
   _container;
   _len;
   _pow;
 
   constructor(view, width, combs) {
-    this._view = view;
-    this._combs = combs;
-    this._container = new Container(width, Settings.OPTIONS_HEIGHT).pos(Settings.MARGIN, 0, view.frame.stage);
+    this._container = new Container(width, Settings.OPTIONS_HEIGHT).pos(Settings.MARGIN, Settings.MARGIN/2, view.frame.stage);
+    let pow_container = new Container().pos(0, 0, this._container);
+    let len_container = new Container().pos(Settings.OPTIONS_STEPPERS_SHIFT, 0, this._container);
 
     let pow_onchange = () => {
       if(pow_stepper.currentValue === this._pow)
@@ -25,14 +23,14 @@ export default class Options {
       else
         len_stepper.currentValue = len_stepper.currentValue; // fixes shadow bug
 
-      this._view.init(null, this._pow, this._len);
+      view.init(null, this._pow, this._len);
     };
 
     let len_onchange = () => {
       if(len_stepper.currentValue === this._len)
         return;
       this._len = len_stepper.currentValue;
-      this._view.init(null, this._pow, this._len);
+      view.init(null, this._pow, this._len);
     };
 
     let pow_stepper = new Stepper({
@@ -43,19 +41,17 @@ export default class Options {
       keyArrows: false
     });
     pow_stepper.on("change", pow_onchange);
+    this._pow = pow_stepper.currentValue = view.elemPow;
 
     let len_stepper = new Stepper({
       stepperType: "number",
       min: 2,
-      max: combs.length,
+      max: 2 + combs[pow_stepper.selectedIndex],
       keyEnabled: false,
       keyArrows: false
     });
     len_stepper.on("change", len_onchange);
-
     this._len = len_stepper.currentValue = view.elemLen;
-    this._pow = pow_stepper.currentValue = view.elemPow;
-    pow_onchange();
 
     let pow_label = new Label({
       text: "Кол-во оснований",
@@ -71,9 +67,13 @@ export default class Options {
       color:"black"
     });
 
-    pow_label.pos(0, 0, this._container);
-    len_label.pos(Settings.OPTIONS_STEPPERS_SHIFT, 0, this._container);
-    pow_stepper.pos(10, Settings.OPTIONS_HEIGHT/2, this._container).scaleTo(this._container, 100, 50);
-    len_stepper.pos(10 + Settings.OPTIONS_STEPPERS_SHIFT, Settings.OPTIONS_HEIGHT/2, this._container).scaleTo(this._container, 100, 50);
+    pow_label.center(pow_container);
+    len_label.center(len_container);
+    pow_stepper.scaleTo(this._container, 100, 50).center(pow_container).mov(0, Settings.OPTIONS_HEIGHT/2);
+    len_stepper.scaleTo(this._container, 100, 50).center(len_container).mov(0, Settings.OPTIONS_HEIGHT/2);
+  }
+
+  get container() {
+    return this._container;
   }
 }

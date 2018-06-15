@@ -12,7 +12,6 @@ export class Genetics {
   }
 
   initialize(domNode, kioapi, preferred_width) {
-    window.kioapi = kioapi; // ONLY FOR TESTS!
     window.genetics = this; // ONLY FOR TESTS!
     console.log('preferred width in problem initialization', preferred_width);
 
@@ -63,26 +62,14 @@ export class Genetics {
   initInterface($domNode) {
     this._main_view = new MainView(this.kio_api);
 
-    let onchange = () => {
-      let power = +this.$alphabet.val() || Settings.DEFAULT_POW;
-      let len = +this.$length.val() || Settings.DEFAULT_LEN;
-      this._try_init(null, power, len);
-    };
-
-    let $notice = $("<p>").text("Поля ввода используются для тестирования и не являются частью интерфейса");
-    this.$alphabet = $("<input class='number-input'>").change(onchange); // Alphabet power
-    this.$length = $("<input class='number-input'>").change(onchange);   // Word length
     let $holder = $("<div id='kio-genetics-holder'>");
-    $domNode.append($notice, this.$alphabet, this.$length, $holder);
-
-    let power = +this.$alphabet.val() || Settings.DEFAULT_POW;
-    let len = +this.$length.val() || Settings.DEFAULT_LEN;
+    $domNode.append($holder);
 
     this._frame = new Frame("kio-genetics-holder", Settings.CANVAS_RELATIVE_WIDTH, Settings.CANVAS_RELATIVE_HEIGHT);
     this._frame.on("ready", () => {
       OPTIMIZE = true;
       Ticker.update = true;
-      this._try_init(this._frame, power, len);
+      this._try_init(this._frame, Settings.DEFAULT_POW, Settings.DEFAULT_LEN);
     });
   }
 

@@ -43,8 +43,10 @@ export default class MainView {
     this._frame.stage.removeAllChildren();
     this._elements = [];
     this._stock = new ElementsStock(this);
-    let combs = this._stock.getAvailableCombinations();
-    this._options = new Options(this, this._frame.width - this._stock.width, combs);
+    if (!this._options)
+      this._options = new Options(this, this._frame.width - this._stock.width, this._stock.getAvailableCombinations());
+    else
+      this._options.container.addTo(this._frame.stage);
     this._layout = new Layout(this, this._frame.width - this._stock.width, Settings.LAYOUT_HEIGHT);
     this._stock.init(this._layout.width);
   }
