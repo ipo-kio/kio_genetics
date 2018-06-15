@@ -64,8 +64,8 @@ export class Genetics {
     this._main_view = new MainView(this.kio_api);
 
     let onchange = () => {
-      let power = +this.$alphabet.val() || 2;
-      let len = +this.$length.val() || 5;
+      let power = +this.$alphabet.val() || Settings.DEFAULT_POW;
+      let len = +this.$length.val() || Settings.DEFAULT_LEN;
       this._try_init(null, power, len);
     };
 
@@ -75,8 +75,8 @@ export class Genetics {
     let $holder = $("<div id='kio-genetics-holder'>");
     $domNode.append($notice, this.$alphabet, this.$length, $holder);
 
-    let power = +this.$alphabet.val() || 2;
-    let len = +this.$length.val() || 5;
+    let power = +this.$alphabet.val() || Settings.DEFAULT_POW;
+    let len = +this.$length.val() || Settings.DEFAULT_LEN;
 
     this._frame = new Frame("kio-genetics-holder", Settings.CANVAS_RELATIVE_WIDTH, Settings.CANVAS_RELATIVE_HEIGHT);
     this._frame.on("ready", () => {

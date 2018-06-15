@@ -1,6 +1,7 @@
 import * as Settings from "./../settings";
 import Layout from "./Layout";
 import ElementsStock from "./ElementsStock";
+import Options from "./Options";
 
 export default class MainView {
 
@@ -8,8 +9,9 @@ export default class MainView {
   _frame;
   _elem_pow = Settings.DEFAULT_POW;
   _elem_len = Settings.DEFAULT_LEN;
-  _layout;
   _stock;
+  _options;
+  _layout;
   _elements;
   _init_solution;
 
@@ -41,6 +43,8 @@ export default class MainView {
     this._frame.stage.removeAllChildren();
     this._elements = [];
     this._stock = new ElementsStock(this);
+    let combs = this._stock.getAvailableCombinations();
+    this._options = new Options(this, this._frame.width - this._stock.width, combs);
     this._layout = new Layout(this, this._frame.width - this._stock.width, Settings.LAYOUT_HEIGHT);
     this._stock.init(this._layout.width);
   }

@@ -13,11 +13,37 @@ export default class ElementsStock {
     this._width = Settings.MARGIN*2 + this._elem_width*rows;
 
     if(this._width > view.frame.width / 2)
-      throw 'Error: ElementsStock is wider than half of MainView';
+      throw "Error: ElementsStock is wider(" + this._width + ") than half of MainView";
   }
 
   get width() {
     return this._width;
+  }
+
+  /**
+   * Возвращаемый массив содержит (максимальную длину элемента-2) для каждого основания,
+   * интерфейс для которой займет не более половины фрейма.
+   */
+  getAvailableCombinations() {
+    let frame_height = this._view.frame.height - Settings.MARGIN*2;
+    let combinations = [];
+
+    const POW_MAX = 16, LEN_MAX = 10;
+    for (let pow=2; pow<POW_MAX; pow++)
+      for (let len=2; len<LEN_MAX; len++) {
+        let elems_per_column = Math.round(frame_height / this._elem_height);
+        let rows = Math.ceil(Math.pow(pow, len) / elems_per_column);
+        let width = Settings.MARGIN*2 + this._elem_width*rows;
+        zog(pow, len, width);
+        if (width > this._view.frame.width / 2) {
+          if(len !== 2) // Длина хотя бы 2
+            combinations[pow - 2] = len - 3;
+          else
+            pow = POW_MAX;
+          break;
+        }
+      }
+      return combinations;
   }
 
   // Draw

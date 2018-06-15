@@ -3,6 +3,8 @@ import {TextModes} from "./graphics/ChainElement"
 export const CANVAS_RELATIVE_WIDTH = 1400;
 export const CANVAS_RELATIVE_HEIGHT = 350;
 
+export const OPTIONS_HEIGHT = 50;
+export const OPTIONS_STEPPERS_SHIFT = 150;
 export const LAYOUT_HEIGHT = 300;
 export const ELEMENT_HEIGHT = 20;
 export const BLOCK_WIDTH = 13;

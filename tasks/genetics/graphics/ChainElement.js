@@ -32,10 +32,9 @@ export default class ChainElement {
 
       let label = new Label({
         text: Settings.textMode === TextModes.LETTER ? text.letter[i] : text.digit[i],
-        size:15,
+        size:16,
         font:"Lucida Console",
         color:"black"
-        //fontOptions:"bold"
       });
       label.center(rect);
 

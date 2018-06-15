@@ -64,7 +64,6 @@ export default class Chain {
     elem.state = ElementStates.OK;
     elem.onpressmove_popwrap = elem.container.on("pressmove", () => this._pop(), null, true);
 
-    zog(this._steps.length, this._view.elemNum);
     if(this._steps.length === this._view.elemNum)
       this._view.submitResult(this._chain.length);
     //zog(this._steps, this._chain);

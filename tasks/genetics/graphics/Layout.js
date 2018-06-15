@@ -17,7 +17,7 @@ export default class Layout {
     this._viewer_height = height;
 
     this._mask = new Rectangle(this._viewer_width, this._viewer_height)
-      .pos(Settings.MARGIN, Settings.MARGIN, this._frame.stage);
+      .pos(Settings.MARGIN, Settings.OPTIONS_HEIGHT + Settings.MARGIN, this._frame.stage);
 
     this._container = new Container()
       .pos(this._mask.x, this._mask.y, this._frame.stage)
